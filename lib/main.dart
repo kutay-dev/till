@@ -155,10 +155,14 @@ class _MainState extends State<Main> {
             showModalBottomSheet(
               isScrollControlled: true,
               context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
               builder: (BuildContext context) {
-                return Container(
+                return SizedBox(
                   height: 600,
-                  color: Colors.white,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
