@@ -165,7 +165,7 @@ class _MainState extends State<Main> {
                       SizedBox(
                         width: 200,
                         child: TextField(
-                          maxLength: 10,
+                          maxLength: 12,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                           textCapitalization: TextCapitalization.characters,
                           decoration: const InputDecoration(
