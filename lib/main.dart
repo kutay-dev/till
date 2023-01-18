@@ -292,13 +292,13 @@ class _CounterCardState extends State<CounterCard> {
       }
     }
 
-    while (!widget.done) {
+    while (true) {
       DateTime now = DateTime.now();
       DateTime leftInSecs = DateTime.parse(widget.date);
       left = leftInSecs.difference(now).inSeconds.toDouble();
       perc = ((left - widget.firstLeft) / widget.firstLeft) * 100;
-
-      if (left == 0) {
+      if (left <= 0) {
+        perc = 0;
         for (int i = 0; i < counterObj.length; i++) {
           if (counterObj[i]["id"] == widget.id) {
             counterObj[i]["done"] = true;
@@ -308,25 +308,26 @@ class _CounterCardState extends State<CounterCard> {
         setState(() {});
         break;
       }
+      if (!widget.done) {
+        daysLeft = left / 86400;
+        daysLeft = daysLeft.floor();
+        left -= daysLeft * 86400;
 
-      daysLeft = left / 86400;
-      daysLeft = daysLeft.floor();
-      left -= daysLeft * 86400;
+        hoursLeft = left / 3600;
+        hoursLeft = hoursLeft.floor();
+        left -= hoursLeft * 3600;
 
-      hoursLeft = left / 3600;
-      hoursLeft = hoursLeft.floor();
-      left -= hoursLeft * 3600;
+        minsLeft = left / 60;
+        minsLeft = minsLeft.floor();
+        left -= minsLeft * 60;
 
-      minsLeft = left / 60;
-      minsLeft = minsLeft.floor();
-      left -= minsLeft * 60;
+        await Future.delayed(const Duration(seconds: 1));
 
-      await Future.delayed(const Duration(seconds: 1));
-
-      for (int i = 0; i < counterObj.length; i++) {
-        if (counterObj[i]["id"] == widget.id) {
-          left -= 1;
-          box.write("counterObj", counterObj);
+        for (int i = 0; i < counterObj.length; i++) {
+          if (counterObj[i]["id"] == widget.id) {
+            left -= 1;
+            box.write("counterObj", counterObj);
+          }
         }
       }
       setState(() {});
