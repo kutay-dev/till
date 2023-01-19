@@ -86,6 +86,8 @@ void confirmDelete(
 
 List counterObj = box.read("counterObj") ?? [];
 
+dynamic size;
+
 class _MainState extends State<Main> {
   List counterCards = [];
 
@@ -141,6 +143,7 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         elevation: 0,
@@ -153,6 +156,9 @@ class _MainState extends State<Main> {
           ),
           onPressed: () {
             showModalBottomSheet(
+              constraints: BoxConstraints(maxWidth: size.width / 1.1),
+              barrierColor: Colors.transparent,
+              backgroundColor: Colors.white24,
               isScrollControlled: true,
               context: context,
               shape: const RoundedRectangleBorder(
@@ -163,64 +169,71 @@ class _MainState extends State<Main> {
               builder: (BuildContext context) {
                 return SizedBox(
                   height: 600,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Stack(
                     children: [
-                      SizedBox(
-                        width: 200,
-                        child: TextField(
-                          maxLength: 12,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                          textCapitalization: TextCapitalization.characters,
-                          decoration: const InputDecoration(
-                            hintText: "TITLE",
-                            hintStyle: TextStyle(
-                                color: Colors.black26,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          textAlign: TextAlign.center,
-                          controller: titleController,
-                        ),
+                      BlurFilter(
+                        child: Container(),
                       ),
-                      Expanded(
-                        child: CupertinoDatePicker(
-                          initialDateTime: DateTime.now(),
-                          onDateTimeChanged: (value) {
-                            date = value;
-                          },
-                        ),
+                      CupertinoDatePicker(
+                        initialDateTime: DateTime.now(),
+                        onDateTimeChanged: (value) {
+                          date = value;
+                        },
                       ),
                       Container(
-                        width: 120,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Colors.blueAccent, Colors.purpleAccent],
+                        padding: const EdgeInsets.only(bottom: 50),
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          width: 120,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Colors.blueAccent, Colors.purpleAccent],
+                            ),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            DateTime now = DateTime.now();
-                            dateStr = "$date";
-                            Duration diff = now.difference(date);
+                          child: ElevatedButton(
+                            onPressed: () {
+                              DateTime now = DateTime.now();
+                              dateStr = "$date";
+                              Duration diff = now.difference(date);
 
-                            if (diff.isNegative) {
-                              Navigator.of(context).pop();
-                              addCounterCard();
-                              setState(() {});
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
+                              if (diff.isNegative) {
+                                Navigator.of(context).pop();
+                                addCounterCard();
+                                setState(() {});
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: const Text("Add Counter"),
                           ),
-                          child: const Text("Add Counter"),
                         ),
                       ),
-                      const SizedBox(height: 50),
+                      TextField(
+                        maxLength: 12,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 22),
+                        textCapitalization: TextCapitalization.characters,
+                        decoration: const InputDecoration(
+                          hintText: "TITLE",
+                          hintStyle: TextStyle(
+                              fontSize: 22,
+                              color: Colors.black26,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        textAlign: TextAlign.center,
+                        controller: titleController,
+                      ),
                     ],
                   ),
                 );
@@ -463,6 +476,36 @@ class _CounterCardState extends State<CounterCard> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class BlurFilter extends StatelessWidget {
+  final Widget child;
+  final double sigmaX;
+  final double sigmaY;
+  const BlurFilter(
+      {super.key, required this.child, this.sigmaX = 17, this.sigmaY = 17});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        child,
+        ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: sigmaX,
+              sigmaY: sigmaY,
+            ),
+            child: Opacity(
+              opacity: 0.01,
+              child: child,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
