@@ -289,38 +289,38 @@ class _MainState extends State<Main> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: (counterCards.isNotEmpty
-                ? SafeArea(
-                    child: ReorderableListView(
-                      onReorder: (oldIndex, newIndex) {
-                        if (newIndex > oldIndex) {
-                          newIndex--;
-                        }
-                        final counterCard = counterObj.removeAt(oldIndex);
-                        counterObj.insert(newIndex, counterCard);
-                        getCounterCards();
-                        setState(() {});
-                      },
-                      children: [
-                        for (final counterCard in counterCards)
-                          SizedBox(
-                            key: ValueKey(counterCard),
-                            child: counterCard,
-                          ),
-                      ],
+      body: SizedBox(
+        child: Expanded(
+          child: (counterCards.isNotEmpty
+              ? ReorderableListView(
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > oldIndex) {
+                      newIndex--;
+                    }
+                    final counterCard = counterObj.removeAt(oldIndex);
+                    counterObj.insert(newIndex, counterCard);
+                    getCounterCards();
+                    setState(() {});
+                  },
+                  children: [
+                    const SizedBox(
+                      height: 50,
+                      key: ValueKey(null),
                     ),
-                  )
-                : const Center(
-                    child: Text(
-                      "You haven't set any counter yet",
-                      style: TextStyle(color: Colors.black45),
-                    ),
-                  )),
-          ),
-        ],
+                    for (final counterCard in counterCards)
+                      SizedBox(
+                        key: ValueKey(counterCard),
+                        child: counterCard,
+                      ),
+                  ],
+                )
+              : const Center(
+                  child: Text(
+                    "You haven't set any counter yet",
+                    style: TextStyle(color: Colors.black45),
+                  ),
+                )),
+        ),
       ),
     );
   }
