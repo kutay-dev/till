@@ -331,7 +331,7 @@ class CounterCard extends StatefulWidget {
   final double firstLeft;
   final String title;
   final String date;
-  final String image;
+  String image;
 
   bool done;
 
@@ -358,6 +358,10 @@ class _CounterCardState extends State<CounterCard> {
     titleController.text = widget.title;
     getDifferece();
     super.initState();
+  }
+
+  Future<void> pickImage() async {
+    selected = await ImagePicker().getImage(source: ImageSource.gallery);
   }
 
   void getDifferece() async {
@@ -430,89 +434,26 @@ class _CounterCardState extends State<CounterCard> {
                 color: (!widget.done) ? Colors.tealAccent : Colors.teal)
             : null,
         height: 120,
-        child: showOptions
-            ? Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    SizedBox(
-                      width: 250,
-                      child: TextField(
-                        controller: titleController,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      child: IconButton(
-                        onPressed: () {
-                          showOptions = false;
-                          for (int i = 0; i < counterObj.length; i++) {
-                            if (counterObj[i]["id"] == widget.id) {
-                              counterObj[i]["title"] = titleController.text;
-                              selected != null
-                                  ? counterObj[i]["image"] = selected!.path
-                                  : null;
-                              box.write("counterObj", counterObj);
-
-                              widget.getCounterCards();
-                            }
-                          }
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.check),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: IconButton(
-                        onPressed: () async {
-                          selected = await ImagePicker()
-                              .getImage(source: ImageSource.gallery);
-                        },
-                        icon: const Icon(Icons.image),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      child: IconButton(
-                        onPressed: () {
-                          confirmDelete(context, widget.id,
-                              widget.deleteCounter, widget.title);
-                          showOptions = false;
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : Stack(
-                children: [
-                  widget.image == "null"
-                      ? const SizedBox()
-                      : BlurFilter(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Image.file(
-                                File(widget.image),
-                                fit: BoxFit.cover,
-                                colorBlendMode: BlendMode.darken,
-                                color: Colors.black12,
-                              ),
-                            ),
-                          ),
+        child: Stack(
+          children: [
+            widget.image == "null"
+                ? const SizedBox()
+                : BlurFilter(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.file(
+                          File(widget.image),
+                          fit: BoxFit.cover,
+                          colorBlendMode: BlendMode.darken,
+                          color: Colors.black12,
                         ),
-                  Row(
+                      ),
+                    ),
+                  ),
+            !showOptions
+                ? Row(
                     children: [
                       const SizedBox(width: 20),
                       CircularPercentIndicator(
@@ -600,8 +541,10 @@ class _CounterCardState extends State<CounterCard> {
                         ],
                       ),
                     ],
-                  ),
-                  Positioned(
+                  )
+                : const SizedBox(),
+            !showOptions
+                ? Positioned(
                     right: 0,
                     child: IconButton(
                       icon: const Icon(
@@ -613,9 +556,99 @@ class _CounterCardState extends State<CounterCard> {
                         setState(() {});
                       },
                     ),
-                  ),
-                ],
-              ),
+                  )
+                : const SizedBox(),
+            showOptions
+                ? Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        BlurFilter(child: Container()),
+                        SizedBox(
+                          width: 250,
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 1, color: Colors.white),
+                              ),
+                            ),
+                            controller: titleController,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          child: IconButton(
+                            onPressed: () {
+                              showOptions = false;
+                              for (int i = 0; i < counterObj.length; i++) {
+                                if (counterObj[i]["id"] == widget.id) {
+                                  counterObj[i]["title"] = titleController.text;
+                                  selected != null
+                                      ? counterObj[i]["image"] = selected!.path
+                                      : null;
+                                  box.write("counterObj", counterObj);
+
+                                  widget.getCounterCards();
+                                }
+                              }
+                              setState(() {});
+                            },
+                            icon: const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: IconButton(
+                            onPressed: () {
+                              pickImage().then((value) {
+                                setState(() {
+                                  widget.image = selected!.path;
+                                });
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.image,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          child: IconButton(
+                            onPressed: () {
+                              confirmDelete(context, widget.id,
+                                  widget.deleteCounter, widget.title);
+                              showOptions = false;
+                              setState(() {});
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : const SizedBox(),
+          ],
+        ),
       ),
     );
   }
