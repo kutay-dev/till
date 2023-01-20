@@ -420,234 +420,265 @@ class _CounterCardState extends State<CounterCard> {
       child: Container(
         decoration: widget.image == "null"
             ? BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Colors.blueAccent,
-                    Colors.purpleAccent,
-                  ],
-                ),
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(20),
+                  Radius.circular(25),
                 ),
-                color: (!widget.done) ? Colors.tealAccent : Colors.teal)
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    spreadRadius: 5,
+                    blurRadius: 10,
+                    offset: const Offset(0, 0), // changes position of shadow
+                  ),
+                ],
+              )
             : null,
         height: 120,
-        child: Stack(
-          children: [
-            widget.image == "null"
-                ? const SizedBox()
-                : BlurFilter(
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.file(
-                          File(widget.image),
-                          fit: BoxFit.cover,
-                          colorBlendMode: BlendMode.darken,
-                          color: Colors.black12,
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Colors.blueAccent.withOpacity(0.8),
+                  Colors.purpleAccent.withOpacity(0.8),
+                ],
+              ),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(20),
+              ),
+              color: (!widget.done) ? Colors.tealAccent : Colors.teal),
+          child: Stack(
+            children: [
+              widget.image == "null"
+                  ? const SizedBox()
+                  : BlurFilter(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(25),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              spreadRadius: 5,
+                              blurRadius: 10,
+                              offset: const Offset(
+                                  0, 0), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        width: double.infinity,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.file(
+                            File(widget.image),
+                            fit: BoxFit.cover,
+                            colorBlendMode: BlendMode.darken,
+                            color: Colors.black12,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-            !showOptions
-                ? Row(
-                    children: [
-                      const SizedBox(width: 20),
-                      CircularPercentIndicator(
-                        radius: 35,
-                        lineWidth: 5,
-                        percent: (100 + perc) / 100,
-                        progressColor: Colors.white,
-                        backgroundColor: Colors.white10,
-                        circularStrokeCap: CircularStrokeCap.round,
-                        center: (widget.done
-                            ? const Icon(
-                                Icons.check,
-                                size: 27,
-                                color: Colors.white,
-                              )
-                            : Text(
-                                "${(100 + perc).toStringAsFixed(0)}%",
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                      ),
-                      const SizedBox(width: 20),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 30),
-                          Text(
-                            widget.title.toString().toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          (!widget.done
-                              ? Column(
-                                  children: [
-                                    SizedBox(
-                                      width: 200,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Text(
-                                            "D: $daysLeft",
-                                            style: const TextStyle(
-                                                color: Colors.white54,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            "H: $hoursLeft",
-                                            style: const TextStyle(
-                                                color: Colors.white54,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 200,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Text(
-                                            "M: $minsLeft",
-                                            style: const TextStyle(
-                                                color: Colors.white54,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            "S: ${left.toStringAsFixed(0)}",
-                                            style: const TextStyle(
-                                                color: Colors.white54,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : const SizedBox()),
-                        ],
-                      ),
-                    ],
-                  )
-                : const SizedBox(),
-            !showOptions
-                ? Positioned(
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.more_vert,
-                        color: Colors.white54,
-                      ),
-                      onPressed: () {
-                        showOptions = true;
-                        setState(() {});
-                      },
-                    ),
-                  )
-                : const SizedBox(),
-            showOptions
-                ? Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.black26,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20),
-                      ),
-                    ),
-                    child: Stack(
+              !showOptions
+                  ? Row(
                       children: [
-                        BlurFilter(child: Container()),
-                        SizedBox(
-                          width: 250,
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.white),
+                        const SizedBox(width: 20),
+                        CircularPercentIndicator(
+                          radius: 35,
+                          lineWidth: 5,
+                          percent: (100 + perc) / 100,
+                          progressColor: Colors.white,
+                          backgroundColor: Colors.white10,
+                          circularStrokeCap: CircularStrokeCap.round,
+                          center: (widget.done
+                              ? const Icon(
+                                  Icons.check,
+                                  size: 27,
+                                  color: Colors.white,
+                                )
+                              : Text(
+                                  "${(100 + perc).toStringAsFixed(0)}%",
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                        ),
+                        const SizedBox(width: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 30),
+                            Text(
+                              widget.title.toString().toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
                             ),
-                            controller: titleController,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Positioned(
-                          right: 0,
-                          child: IconButton(
-                            onPressed: () {
-                              showOptions = false;
-                              for (int i = 0; i < counterObj.length; i++) {
-                                if (counterObj[i]["id"] == widget.id) {
-                                  counterObj[i]["title"] = titleController.text;
-                                  selected != null
-                                      ? counterObj[i]["image"] = selected!.path
-                                      : null;
-                                  box.write("counterObj", counterObj);
-
-                                  widget.getCounterCards();
-                                }
-                              }
-                              setState(() {});
-                            },
-                            icon: const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: IconButton(
-                            onPressed: () {
-                              pickImage().then((value) {
-                                setState(() {
-                                  widget.image = selected!.path;
-                                });
-                              });
-                            },
-                            icon: const Icon(
-                              Icons.image,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          child: IconButton(
-                            onPressed: () {
-                              confirmDelete(context, widget.id,
-                                  widget.deleteCounter, widget.title);
-                              showOptions = false;
-                              setState(() {});
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                          ),
+                            const SizedBox(height: 10),
+                            (!widget.done
+                                ? Column(
+                                    children: [
+                                      SizedBox(
+                                        width: 200,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Text(
+                                              "D: $daysLeft",
+                                              style: const TextStyle(
+                                                  color: Colors.white54,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              "H: $hoursLeft",
+                                              style: const TextStyle(
+                                                  color: Colors.white54,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 200,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Text(
+                                              "M: $minsLeft",
+                                              style: const TextStyle(
+                                                  color: Colors.white54,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              "S: ${left.toStringAsFixed(0)}",
+                                              style: const TextStyle(
+                                                  color: Colors.white54,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : const SizedBox()),
+                          ],
                         ),
                       ],
-                    ),
-                  )
-                : const SizedBox(),
-          ],
+                    )
+                  : const SizedBox(),
+              !showOptions
+                  ? Positioned(
+                      right: 0,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.more_vert,
+                          color: Colors.white54,
+                        ),
+                        onPressed: () {
+                          showOptions = true;
+                          setState(() {});
+                        },
+                      ),
+                    )
+                  : const SizedBox(),
+              showOptions
+                  ? Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20),
+                        ),
+                      ),
+                      child: Stack(
+                        children: [
+                          BlurFilter(child: Container()),
+                          SizedBox(
+                            width: 250,
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.white),
+                                ),
+                              ),
+                              controller: titleController,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            child: IconButton(
+                              onPressed: () {
+                                showOptions = false;
+                                for (int i = 0; i < counterObj.length; i++) {
+                                  if (counterObj[i]["id"] == widget.id) {
+                                    counterObj[i]["title"] =
+                                        titleController.text;
+                                    selected != null
+                                        ? counterObj[i]["image"] =
+                                            selected!.path
+                                        : null;
+                                    box.write("counterObj", counterObj);
+
+                                    widget.getCounterCards();
+                                  }
+                                }
+                                setState(() {});
+                              },
+                              icon: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: IconButton(
+                              onPressed: () {
+                                pickImage().then((value) {
+                                  setState(() {
+                                    widget.image = selected!.path;
+                                  });
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.image,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            child: IconButton(
+                              onPressed: () {
+                                confirmDelete(context, widget.id,
+                                    widget.deleteCounter, widget.title);
+                                showOptions = false;
+                                setState(() {});
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox(),
+            ],
+          ),
         ),
       ),
     );
