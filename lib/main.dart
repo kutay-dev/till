@@ -178,8 +178,6 @@ class _MainState extends State<Main> {
               onPressed: () {
                 showModalBottomSheet(
                   constraints: BoxConstraints(maxWidth: size.width / 1.1),
-                  barrierColor: Colors.transparent,
-                  backgroundColor: Colors.white24,
                   isScrollControlled: true,
                   context: context,
                   shape: const RoundedRectangleBorder(
@@ -192,9 +190,6 @@ class _MainState extends State<Main> {
                       height: 600,
                       child: Stack(
                         children: [
-                          BlurFilter(
-                            child: Container(),
-                          ),
                           CupertinoDatePicker(
                             initialDateTime: DateTime.now(),
                             onDateTimeChanged: (value) {
