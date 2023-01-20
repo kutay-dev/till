@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:math';
 import 'dart:ui';
+import 'dart:io';
 import 'package:get_storage/get_storage.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() async {
   await GetStorage.init();
@@ -37,10 +39,7 @@ void confirmDelete(
     context: context,
     builder: (BuildContext context) {
       return BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 2,
-          sigmaY: 2,
-        ),
+        filter: ImageFilter.blur(),
         child: AlertDialog(
           title: Text(
             (title.isEmpty
@@ -88,6 +87,12 @@ List counterObj = box.read("counterObj") ?? [];
 
 dynamic size;
 
+PickedFile? selected;
+
+Future<void> pickImage() async {
+  selected = await ImagePicker().getImage(source: ImageSource.gallery);
+}
+
 class _MainState extends State<Main> {
   List counterCards = [];
 
@@ -112,6 +117,7 @@ class _MainState extends State<Main> {
         date: counterObj[i]["date"],
         done: counterObj[i]["done"],
         deleteCounter: deleteCounter,
+        image: counterObj[i]["image"],
       ));
     }
   }
@@ -134,10 +140,12 @@ class _MainState extends State<Main> {
       "leftt": left,
       "date": dateStr,
       "done": false,
+      "image": selected != null ? selected!.path : "null",
     });
 
     box.write("counterObj", counterObj);
     getCounterCards();
+    selected = null;
     setState(() {});
   }
 
@@ -145,102 +153,138 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        elevation: 0,
-        backgroundColor: Colors.black12,
-        onPressed: () {},
-        child: IconButton(
-          icon: const Icon(
-            Icons.add,
-            size: 30,
-          ),
-          onPressed: () {
-            showModalBottomSheet(
-              constraints: BoxConstraints(maxWidth: size.width / 1.1),
-              barrierColor: Colors.transparent,
-              backgroundColor: Colors.white24,
-              isScrollControlled: true,
-              context: context,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(20),
+      floatingActionButton: Stack(
+        alignment: Alignment.center,
+        children: [
+          BlurFilter(
+            radius: 100,
+            sigmaX: 10,
+            sigmaY: 10,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.black12,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(200),
                 ),
               ),
-              builder: (BuildContext context) {
-                return SizedBox(
-                  height: 600,
-                  child: Stack(
-                    children: [
-                      BlurFilter(
-                        child: Container(),
-                      ),
-                      CupertinoDatePicker(
-                        initialDateTime: DateTime.now(),
-                        onDateTimeChanged: (value) {
-                          date = value;
-                        },
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(bottom: 50),
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          width: 120,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Colors.blueAccent, Colors.purpleAccent],
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              DateTime now = DateTime.now();
-                              dateStr = "$date";
-                              Duration diff = now.difference(date);
-
-                              if (diff.isNegative) {
-                                Navigator.of(context).pop();
-                                addCounterCard();
-                                setState(() {});
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                            ),
-                            child: const Text("Add Counter"),
-                          ),
-                        ),
-                      ),
-                      TextField(
-                        maxLength: 12,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 22),
-                        textCapitalization: TextCapitalization.characters,
-                        decoration: const InputDecoration(
-                          hintText: "TITLE",
-                          hintStyle: TextStyle(
-                              fontSize: 22,
-                              color: Colors.black26,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        textAlign: TextAlign.center,
-                        controller: titleController,
-                      ),
-                    ],
+              width: 60,
+              height: 60,
+            ),
+          ),
+          SizedBox(
+            width: 60,
+            height: 60,
+            child: IconButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  constraints: BoxConstraints(maxWidth: size.width / 1.1),
+                  barrierColor: Colors.transparent,
+                  backgroundColor: Colors.white24,
+                  isScrollControlled: true,
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
                   ),
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      height: 600,
+                      child: Stack(
+                        children: [
+                          BlurFilter(
+                            child: Container(),
+                          ),
+                          CupertinoDatePicker(
+                            initialDateTime: DateTime.now(),
+                            onDateTimeChanged: (value) {
+                              date = value;
+                            },
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(bottom: 50),
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              width: 120,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.blueAccent,
+                                    Colors.purpleAccent
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  DateTime now = DateTime.now();
+                                  dateStr = "$date";
+                                  Duration diff = now.difference(date);
+
+                                  if (diff.isNegative) {
+                                    Navigator.of(context).pop();
+                                    addCounterCard();
+                                    setState(() {});
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                ),
+                                child: const Text("Add Counter"),
+                              ),
+                            ),
+                          ),
+                          TextField(
+                            maxLength: 12,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 22),
+                            textCapitalization: TextCapitalization.characters,
+                            decoration: const InputDecoration(
+                              hintText: "TITLE",
+                              hintStyle: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.black26,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            textAlign: TextAlign.center,
+                            controller: titleController,
+                          ),
+                          Positioned(
+                            bottom: 45,
+                            right: 50,
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.image,
+                                ),
+                                onPressed: () => pickImage(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 );
               },
-            );
-          },
-        ),
+              icon: const Icon(Icons.add),
+              iconSize: 30,
+              color: Colors.white,
+              splashRadius: 0.1,
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -274,6 +318,7 @@ class CounterCard extends StatefulWidget {
     required this.date,
     required this.done,
     required this.deleteCounter,
+    required this.image,
   }) : super(key: key);
 
   final dynamic deleteCounter;
@@ -281,6 +326,7 @@ class CounterCard extends StatefulWidget {
   final double firstLeft;
   final String title;
   final String date;
+  final String image;
 
   bool done;
 
@@ -356,22 +402,40 @@ class _CounterCardState extends State<CounterCard> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(22, 12, 22, 12),
       child: Container(
-        decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Colors.blueAccent,
-                Colors.purpleAccent,
-              ],
-            ),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(20),
-            ),
-            color: (!widget.done) ? Colors.tealAccent : Colors.teal),
+        decoration: widget.image == "null"
+            ? BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.blueAccent,
+                    Colors.purpleAccent,
+                  ],
+                ),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(20),
+                ),
+                color: (!widget.done) ? Colors.tealAccent : Colors.teal)
+            : null,
         height: 120,
         child: Stack(
           children: [
+            widget.image == "null"
+                ? const SizedBox()
+                : BlurFilter(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.file(
+                          File(widget.image),
+                          fit: BoxFit.cover,
+                          colorBlendMode: BlendMode.darken,
+                          color: Colors.black12,
+                        ),
+                      ),
+                    ),
+                  ),
             Row(
               children: [
                 const SizedBox(width: 20),
@@ -484,8 +548,14 @@ class BlurFilter extends StatelessWidget {
   final Widget child;
   final double sigmaX;
   final double sigmaY;
-  const BlurFilter(
-      {super.key, required this.child, this.sigmaX = 17, this.sigmaY = 17});
+  final double radius;
+  const BlurFilter({
+    super.key,
+    required this.child,
+    this.sigmaX = 2,
+    this.sigmaY = 2,
+    this.radius = 20,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -493,7 +563,7 @@ class BlurFilter extends StatelessWidget {
       children: <Widget>[
         child,
         ClipRRect(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(radius),
           child: BackdropFilter(
             filter: ImageFilter.blur(
               sigmaX: sigmaX,
