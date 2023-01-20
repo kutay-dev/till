@@ -87,12 +87,6 @@ List counterObj = box.read("counterObj") ?? [];
 
 dynamic size;
 
-PickedFile? selected;
-
-Future<void> pickImage() async {
-  selected = await ImagePicker().getImage(source: ImageSource.gallery);
-}
-
 class _MainState extends State<Main> {
   List counterCards = [];
 
@@ -100,6 +94,12 @@ class _MainState extends State<Main> {
 
   late DateTime date;
   late String dateStr;
+
+  PickedFile? selected;
+
+  Future<void> pickImage() async {
+    selected = await ImagePicker().getImage(source: ImageSource.gallery);
+  }
 
   @override
   void initState() {
@@ -117,9 +117,11 @@ class _MainState extends State<Main> {
         date: counterObj[i]["date"],
         done: counterObj[i]["done"],
         deleteCounter: deleteCounter,
+        getCounterCards: getCounterCards,
         image: counterObj[i]["image"],
       ));
     }
+    setState(() {});
   }
 
   void deleteCounter(i) {
@@ -146,6 +148,7 @@ class _MainState extends State<Main> {
     box.write("counterObj", counterObj);
     getCounterCards();
     selected = null;
+    titleController.clear();
     setState(() {});
   }
 
@@ -319,9 +322,11 @@ class CounterCard extends StatefulWidget {
     required this.done,
     required this.deleteCounter,
     required this.image,
+    required this.getCounterCards,
   }) : super(key: key);
 
   final dynamic deleteCounter;
+  final dynamic getCounterCards;
   final int id;
   final double firstLeft;
   final String title;
@@ -342,8 +347,15 @@ class _CounterCardState extends State<CounterCard> {
 
   late double perc;
 
+  bool showOptions = false;
+
+  TextEditingController titleController = TextEditingController();
+
+  PickedFile? selected;
+
   @override
   void initState() {
+    titleController.text = widget.title;
     getDifferece();
     super.initState();
   }
@@ -418,127 +430,192 @@ class _CounterCardState extends State<CounterCard> {
                 color: (!widget.done) ? Colors.tealAccent : Colors.teal)
             : null,
         height: 120,
-        child: Stack(
-          children: [
-            widget.image == "null"
-                ? const SizedBox()
-                : BlurFilter(
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.file(
-                          File(widget.image),
-                          fit: BoxFit.cover,
-                          colorBlendMode: BlendMode.darken,
-                          color: Colors.black12,
-                        ),
-                      ),
-                    ),
+        child: showOptions
+            ? Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(20),
                   ),
-            Row(
-              children: [
-                const SizedBox(width: 20),
-                CircularPercentIndicator(
-                  radius: 35,
-                  lineWidth: 5,
-                  percent: (100 + perc) / 100,
-                  progressColor: Colors.white,
-                  backgroundColor: Colors.white10,
-                  circularStrokeCap: CircularStrokeCap.round,
-                  center: (widget.done
-                      ? const Icon(
-                          Icons.check,
-                          size: 27,
-                          color: Colors.white,
-                        )
-                      : Text(
-                          "${(100 + perc).toStringAsFixed(0)}%",
-                          style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        )),
                 ),
-                const SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
                   children: [
-                    const SizedBox(height: 30),
-                    Text(
-                      widget.title.toString().toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    SizedBox(
+                      width: 250,
+                      child: TextField(
+                        controller: titleController,
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    (!widget.done
-                        ? Column(
-                            children: [
-                              SizedBox(
-                                width: 200,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      "D: $daysLeft",
-                                      style: const TextStyle(
-                                          color: Colors.white54,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "H: $hoursLeft",
-                                      style: const TextStyle(
-                                          color: Colors.white54,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: 200,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      "M: $minsLeft",
-                                      style: const TextStyle(
-                                          color: Colors.white54,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "S: ${left.toStringAsFixed(0)}",
-                                      style: const TextStyle(
-                                          color: Colors.white54,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          )
-                        : const SizedBox()),
+                    Positioned(
+                      right: 0,
+                      child: IconButton(
+                        onPressed: () {
+                          showOptions = false;
+                          for (int i = 0; i < counterObj.length; i++) {
+                            if (counterObj[i]["id"] == widget.id) {
+                              counterObj[i]["title"] = titleController.text;
+                              selected != null
+                                  ? counterObj[i]["image"] = selected!.path
+                                  : null;
+                              box.write("counterObj", counterObj);
+
+                              widget.getCounterCards();
+                            }
+                          }
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.check),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        onPressed: () async {
+                          selected = await ImagePicker()
+                              .getImage(source: ImageSource.gallery);
+                        },
+                        icon: const Icon(Icons.image),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      child: IconButton(
+                        onPressed: () {
+                          confirmDelete(context, widget.id,
+                              widget.deleteCounter, widget.title);
+                          showOptions = false;
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ),
                   ],
                 ),
-              ],
-            ),
-            Positioned(
-              right: 0,
-              child: IconButton(
-                icon: const Icon(
-                  Icons.delete,
-                  color: Colors.white54,
-                ),
-                onPressed: () {
-                  confirmDelete(
-                      context, widget.id, widget.deleteCounter, widget.title);
-                },
+              )
+            : Stack(
+                children: [
+                  widget.image == "null"
+                      ? const SizedBox()
+                      : BlurFilter(
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.file(
+                                File(widget.image),
+                                fit: BoxFit.cover,
+                                colorBlendMode: BlendMode.darken,
+                                color: Colors.black12,
+                              ),
+                            ),
+                          ),
+                        ),
+                  Row(
+                    children: [
+                      const SizedBox(width: 20),
+                      CircularPercentIndicator(
+                        radius: 35,
+                        lineWidth: 5,
+                        percent: (100 + perc) / 100,
+                        progressColor: Colors.white,
+                        backgroundColor: Colors.white10,
+                        circularStrokeCap: CircularStrokeCap.round,
+                        center: (widget.done
+                            ? const Icon(
+                                Icons.check,
+                                size: 27,
+                                color: Colors.white,
+                              )
+                            : Text(
+                                "${(100 + perc).toStringAsFixed(0)}%",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                      ),
+                      const SizedBox(width: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 30),
+                          Text(
+                            widget.title.toString().toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          (!widget.done
+                              ? Column(
+                                  children: [
+                                    SizedBox(
+                                      width: 200,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Text(
+                                            "D: $daysLeft",
+                                            style: const TextStyle(
+                                                color: Colors.white54,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            "H: $hoursLeft",
+                                            style: const TextStyle(
+                                                color: Colors.white54,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Text(
+                                            "M: $minsLeft",
+                                            style: const TextStyle(
+                                                color: Colors.white54,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            "S: ${left.toStringAsFixed(0)}",
+                                            style: const TextStyle(
+                                                color: Colors.white54,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox()),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.more_vert,
+                        color: Colors.white54,
+                      ),
+                      onPressed: () {
+                        showOptions = true;
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
