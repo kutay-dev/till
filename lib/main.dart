@@ -200,8 +200,8 @@ class _MainState extends State<Main> {
                             padding: const EdgeInsets.only(bottom: 50),
                             alignment: Alignment.bottomCenter,
                             child: Container(
-                              width: 120,
-                              height: 40,
+                              width: 170,
+                              height: 50,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
                                   begin: Alignment.topLeft,
@@ -234,7 +234,12 @@ class _MainState extends State<Main> {
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
                                 ),
-                                child: const Text("Add Counter"),
+                                child: const Text(
+                                  "Add Counter",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                           ),
@@ -254,7 +259,7 @@ class _MainState extends State<Main> {
                             controller: titleController,
                           ),
                           Positioned(
-                            bottom: 45,
+                            bottom: 50,
                             right: 50,
                             child: SizedBox(
                               width: 50,
