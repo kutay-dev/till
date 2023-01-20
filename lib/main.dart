@@ -436,18 +436,18 @@ class _CounterCardState extends State<CounterCard> {
         height: 120,
         child: Container(
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Colors.blueAccent.withOpacity(0.8),
-                  Colors.purpleAccent.withOpacity(0.8),
-                ],
-              ),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(20),
-              ),
-              color: (!widget.done) ? Colors.tealAccent : Colors.teal),
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Colors.blueAccent.withOpacity(0.8),
+                Colors.purpleAccent.withOpacity(0.8),
+              ],
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(20),
+            ),
+          ),
           child: Stack(
             children: [
               widget.image == "null"
