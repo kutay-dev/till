@@ -529,7 +529,7 @@ class _CounterCardState extends State<CounterCard> {
               child: IconButton(
                 icon: const Icon(
                   Icons.delete,
-                  color: Colors.white38,
+                  color: Colors.white54,
                 ),
                 onPressed: () {
                   confirmDelete(
