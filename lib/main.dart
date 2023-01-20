@@ -552,8 +552,8 @@ class BlurFilter extends StatelessWidget {
   const BlurFilter({
     super.key,
     required this.child,
-    this.sigmaX = 2,
-    this.sigmaY = 2,
+    this.sigmaX = 1.5,
+    this.sigmaY = 1.5,
     this.radius = 20,
   });
 
