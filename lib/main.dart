@@ -293,11 +293,25 @@ class _MainState extends State<Main> {
         children: [
           Expanded(
             child: (counterCards.isNotEmpty
-                ? ListView.builder(
-                    itemCount: counterCards.length,
-                    itemBuilder: ((context, index) {
-                      return counterCards[index];
-                    }),
+                ? SafeArea(
+                    child: ReorderableListView(
+                      onReorder: (oldIndex, newIndex) {
+                        if (newIndex > oldIndex) {
+                          newIndex--;
+                        }
+                        final counterCard = counterObj.removeAt(oldIndex);
+                        counterObj.insert(newIndex, counterCard);
+                        getCounterCards();
+                        setState(() {});
+                      },
+                      children: [
+                        for (final counterCard in counterCards)
+                          SizedBox(
+                            key: ValueKey(counterCard),
+                            child: counterCard,
+                          ),
+                      ],
+                    ),
                   )
                 : const Center(
                     child: Text(
