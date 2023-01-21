@@ -453,7 +453,7 @@ class _CounterCardState extends State<CounterCard> {
       padding: const EdgeInsets.fromLTRB(22, 12, 22, 12),
       child: AnimatedContainer(
         curve: Curves.ease,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 150),
         decoration: widget.image == "null"
             ? BoxDecoration(
                 borderRadius: const BorderRadius.all(
@@ -610,7 +610,7 @@ class _CounterCardState extends State<CounterCard> {
                 ),
               ),
               AnimatedOpacity(
-                duration: const Duration(milliseconds: 150),
+                duration: const Duration(milliseconds: 100),
                 opacity: optionsOpacity,
                 child: Container(
                   decoration: const BoxDecoration(
@@ -638,7 +638,7 @@ class _CounterCardState extends State<CounterCard> {
                           ? counterObj[rank]["image"] = selected!.path
                           : null;
                       box.write("counterObj", counterObj);
-                      await Future.delayed(const Duration(milliseconds: 300));
+                      await Future.delayed(const Duration(milliseconds: 150));
                       widget.getCounterCards();
                     }
                     showOptions = !showOptions;
@@ -648,7 +648,7 @@ class _CounterCardState extends State<CounterCard> {
                 ),
               ),
               AnimatedOpacity(
-                duration: const Duration(milliseconds: 150),
+                duration: const Duration(milliseconds: 100),
                 opacity: optionsOpacity,
                 child: Stack(
                   children: [
