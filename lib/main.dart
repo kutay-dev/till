@@ -473,7 +473,7 @@ class _CounterCardState extends State<CounterCard> {
                     color: Colors.black.withOpacity(0.3),
                     spreadRadius: 5,
                     blurRadius: 10,
-                    offset: const Offset(0, 0), // changes position of shadow
+                    offset: const Offset(0, 0),
                   ),
                 ],
               )
@@ -508,8 +508,7 @@ class _CounterCardState extends State<CounterCard> {
                               color: Colors.black.withOpacity(0.3),
                               spreadRadius: 5,
                               blurRadius: 10,
-                              offset: const Offset(
-                                  0, 0), // changes position of shadow
+                              offset: const Offset(0, 0),
                             ),
                           ],
                         ),
@@ -638,7 +637,6 @@ class _CounterCardState extends State<CounterCard> {
                     color: Colors.white54,
                   ),
                   onPressed: () async {
-                    //showOptions = true;
                     animateCardHeight();
                     animateOptionsOpacity();
                     if (showOptions) {
@@ -710,7 +708,6 @@ class _CounterCardState extends State<CounterCard> {
                           if (optionsOpacity == 1) {
                             confirmDelete(context, widget.id,
                                 widget.deleteCounter, widget.title);
-                            //showOptionss = false;
                             setState(() {});
                           }
                         },
