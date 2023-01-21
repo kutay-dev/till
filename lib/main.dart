@@ -683,12 +683,15 @@ class _CounterCardState extends State<CounterCard> {
                       child: TextField(
                         maxLength: 12,
                         textCapitalization: TextCapitalization.characters,
-                        decoration: const InputDecoration(
-                          counterStyle: TextStyle(color: Colors.transparent),
-                          focusedBorder: UnderlineInputBorder(
+                        decoration: InputDecoration(
+                          hintText: widget.title == "" ? "TITLE" : "",
+                          hintStyle: const TextStyle(color: Colors.white54),
+                          counterStyle:
+                              const TextStyle(color: Colors.transparent),
+                          focusedBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white),
                           ),
-                          enabledBorder: UnderlineInputBorder(
+                          enabledBorder: const UnderlineInputBorder(
                             borderSide:
                                 BorderSide(width: 1, color: Colors.white38),
                           ),
