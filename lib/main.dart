@@ -193,11 +193,20 @@ class _MainState extends State<Main> {
                       height: 600,
                       child: Stack(
                         children: [
-                          CupertinoDatePicker(
-                            initialDateTime: DateTime.now(),
-                            onDateTimeChanged: (value) {
-                              date = value;
-                            },
+                          CupertinoTheme(
+                            data: const CupertinoThemeData(
+                              textTheme: CupertinoTextThemeData(
+                                dateTimePickerTextStyle: TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            child: CupertinoDatePicker(
+                              initialDateTime: DateTime.now(),
+                              onDateTimeChanged: (value) {
+                                date = value;
+                              },
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.only(bottom: 50),
