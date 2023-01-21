@@ -609,6 +609,18 @@ class _CounterCardState extends State<CounterCard> {
                   ],
                 ),
               ),
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 150),
+                opacity: optionsOpacity,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 right: 0,
                 child: IconButton(
@@ -658,12 +670,14 @@ class _CounterCardState extends State<CounterCard> {
                       ),
                     ),
                     Positioned(
-                      bottom: 10,
-                      left: 100,
-                      right: 100,
+                      bottom: -15,
+                      left: 85,
+                      right: 85,
                       child: TextField(
+                        maxLength: 12,
                         textCapitalization: TextCapitalization.characters,
                         decoration: const InputDecoration(
+                          counterStyle: TextStyle(color: Colors.transparent),
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white),
                           ),
