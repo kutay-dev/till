@@ -252,6 +252,9 @@ class _MainState extends State<Main> {
                                 fontWeight: FontWeight.bold, fontSize: 22),
                             textCapitalization: TextCapitalization.characters,
                             decoration: const InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                              ),
                               hintText: "TITLE",
                               hintStyle: TextStyle(
                                   fontSize: 22,
@@ -613,9 +616,12 @@ class _CounterCardState extends State<CounterCard> {
                             width: 250,
                             child: TextField(
                               decoration: const InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
                                 enabledBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(width: 1, color: Colors.white),
+                                  borderSide: BorderSide(
+                                      width: 1, color: Colors.white38),
                                 ),
                               ),
                               controller: titleController,
