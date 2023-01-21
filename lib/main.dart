@@ -436,7 +436,7 @@ class _CounterCardState extends State<CounterCard> {
   }
 
   void animateCardHeight() {
-    cardHeight = cardHeight == 120 ? 180 : 120;
+    cardHeight = cardHeight == 120 ? 170 : 120;
     setState(() {});
   }
 
@@ -516,94 +516,98 @@ class _CounterCardState extends State<CounterCard> {
                         ),
                       ),
                     ),
-              Row(
-                children: [
-                  const SizedBox(width: 20),
-                  CircularPercentIndicator(
-                    radius: 35,
-                    lineWidth: 5,
-                    percent: (100 + perc) / 100,
-                    progressColor: Colors.white,
-                    backgroundColor: Colors.white10,
-                    circularStrokeCap: CircularStrokeCap.round,
-                    center: (widget.done
-                        ? const Icon(
-                            Icons.check,
-                            size: 27,
-                            color: Colors.white,
-                          )
-                        : Text(
-                            "${(100 + perc).toStringAsFixed(0)}%",
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          )),
-                  ),
-                  const SizedBox(width: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 30),
-                      Text(
-                        widget.title.toString().toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+              Positioned(
+                top: 25,
+                left: 25,
+                child: CircularPercentIndicator(
+                  radius: 35,
+                  lineWidth: 5,
+                  percent: (100 + perc) / 100,
+                  progressColor: Colors.white,
+                  backgroundColor: Colors.white10,
+                  circularStrokeCap: CircularStrokeCap.round,
+                  center: (widget.done
+                      ? const Icon(
+                          Icons.check,
+                          size: 27,
                           color: Colors.white,
+                        )
+                      : Text(
+                          "${(100 + perc).toStringAsFixed(0)}%",
+                          style: const TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        )),
+                ),
+              ),
+              Positioned(
+                top: 25,
+                left: 120,
+                child: Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.title.toString().toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      (!widget.done
-                          ? Column(
-                              children: [
-                                SizedBox(
-                                  width: 200,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        "D: $daysLeft",
-                                        style: const TextStyle(
-                                            color: Colors.white54,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        "H: $hoursLeft",
-                                        style: const TextStyle(
-                                            color: Colors.white54,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
+                        const SizedBox(height: 15),
+                        (!widget.done
+                            ? Column(
+                                children: [
+                                  SizedBox(
+                                    width: 200,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          "D: $daysLeft",
+                                          style: const TextStyle(
+                                              color: Colors.white54,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          "H: $hoursLeft",
+                                          style: const TextStyle(
+                                              color: Colors.white54,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 200,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        "M: $minsLeft",
-                                        style: const TextStyle(
-                                            color: Colors.white54,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        "S: ${left.toStringAsFixed(0)}",
-                                        style: const TextStyle(
-                                            color: Colors.white54,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
+                                  SizedBox(
+                                    width: 200,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          "M: $minsLeft",
+                                          style: const TextStyle(
+                                              color: Colors.white54,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          "S: ${left.toStringAsFixed(0)}",
+                                          style: const TextStyle(
+                                              color: Colors.white54,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            )
-                          : const SizedBox()),
-                    ],
-                  ),
-                ],
+                                ],
+                              )
+                            : const SizedBox()),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               Positioned(
                 right: 0,
