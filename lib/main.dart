@@ -263,7 +263,7 @@ class _MainState extends State<Main> {
                           ),
                           Positioned(
                             bottom: 50,
-                            right: 50,
+                            right: size.width / 10,
                             child: SizedBox(
                               width: 50,
                               height: 50,
