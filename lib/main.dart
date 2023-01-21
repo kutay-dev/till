@@ -367,8 +367,16 @@ class _CounterCardState extends State<CounterCard> {
 
   PickedFile? selected;
 
+  late int rank;
+
   @override
   void initState() {
+    for (int i = 0; i < counterObj.length; i++) {
+      if (counterObj[i]["id"] == widget.id) {
+        rank = i;
+        break;
+      }
+    }
     titleController.text = widget.title;
     getDifferece();
     super.initState();
@@ -379,11 +387,7 @@ class _CounterCardState extends State<CounterCard> {
   }
 
   void getDifferece() async {
-    for (int i = 0; i < counterObj.length; i++) {
-      if (counterObj[i]["id"] == widget.id) {
-        widget.done = counterObj[i]["done"];
-      }
-    }
+    widget.done = counterObj[rank]["done"];
 
     while (true) {
       DateTime now = DateTime.now();
@@ -392,12 +396,8 @@ class _CounterCardState extends State<CounterCard> {
       perc = ((left - widget.firstLeft) / widget.firstLeft) * 100;
       if (left <= 0) {
         perc = 0;
-        for (int i = 0; i < counterObj.length; i++) {
-          if (counterObj[i]["id"] == widget.id) {
-            counterObj[i]["done"] = true;
-            widget.done = true;
-          }
-        }
+        counterObj[rank]["done"] = true;
+        widget.done = true;
         setState(() {});
         break;
       }
@@ -416,12 +416,8 @@ class _CounterCardState extends State<CounterCard> {
 
         await Future.delayed(const Duration(seconds: 1));
 
-        for (int i = 0; i < counterObj.length; i++) {
-          if (counterObj[i]["id"] == widget.id) {
-            left -= 1;
-            box.write("counterObj", counterObj);
-          }
-        }
+        left -= 1;
+        box.write("counterObj", counterObj);
       }
       setState(() {});
     }
@@ -634,19 +630,16 @@ class _CounterCardState extends State<CounterCard> {
                             child: IconButton(
                               onPressed: () {
                                 showOptions = false;
-                                for (int i = 0; i < counterObj.length; i++) {
-                                  if (counterObj[i]["id"] == widget.id) {
-                                    counterObj[i]["title"] =
-                                        titleController.text;
-                                    selected != null
-                                        ? counterObj[i]["image"] =
-                                            selected!.path
-                                        : null;
-                                    box.write("counterObj", counterObj);
 
-                                    widget.getCounterCards();
-                                  }
-                                }
+                                counterObj[rank]["title"] =
+                                    titleController.text;
+                                selected != null
+                                    ? counterObj[rank]["image"] = selected!.path
+                                    : null;
+                                box.write("counterObj", counterObj);
+
+                                widget.getCounterCards();
+
                                 setState(() {});
                               },
                               icon: const Icon(
