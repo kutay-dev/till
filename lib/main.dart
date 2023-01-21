@@ -381,7 +381,7 @@ class _CounterCardState extends State<CounterCard> {
         break;
       }
     }
-    titleController.text = widget.title;
+    titleController.text = widget.title.toUpperCase();
     getDifferece();
     cardHeight = 120;
     super.initState();
@@ -662,6 +662,7 @@ class _CounterCardState extends State<CounterCard> {
                       left: 100,
                       right: 100,
                       child: TextField(
+                        textCapitalization: TextCapitalization.characters,
                         decoration: const InputDecoration(
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white),
