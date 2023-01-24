@@ -96,9 +96,11 @@ class _MainState extends State<Main> {
   late String dateStr;
 
   PickedFile? selected;
+  ValueNotifier<String> selectedPath = ValueNotifier("");
 
   Future<void> pickImage() async {
     selected = await ImagePicker().getImage(source: ImageSource.gallery);
+    selectedPath.value = selected!.path;
   }
 
   @override
@@ -180,7 +182,6 @@ class _MainState extends State<Main> {
             child: IconButton(
               onPressed: () {
                 showModalBottomSheet(
-                  constraints: BoxConstraints(maxWidth: size.width / 1.1),
                   isScrollControlled: true,
                   context: context,
                   shape: const RoundedRectangleBorder(
@@ -190,22 +191,28 @@ class _MainState extends State<Main> {
                   ),
                   builder: (BuildContext context) {
                     return SizedBox(
-                      height: 600,
                       child: Stack(
                         children: [
-                          CupertinoTheme(
-                            data: const CupertinoThemeData(
-                              textTheme: CupertinoTextThemeData(
-                                dateTimePickerTextStyle: TextStyle(
-                                  fontSize: 18,
+                          Positioned(
+                            top: 115,
+                            child: CupertinoTheme(
+                              data: const CupertinoThemeData(
+                                textTheme: CupertinoTextThemeData(
+                                  dateTimePickerTextStyle: TextStyle(
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
-                            ),
-                            child: CupertinoDatePicker(
-                              initialDateTime: DateTime.now(),
-                              onDateTimeChanged: (value) {
-                                date = value;
-                              },
+                              child: SizedBox(
+                                height: size.height / 1.2,
+                                width: size.width,
+                                child: CupertinoDatePicker(
+                                  initialDateTime: DateTime.now(),
+                                  onDateTimeChanged: (value) {
+                                    date = value;
+                                  },
+                                ),
+                              ),
                             ),
                           ),
                           Container(
@@ -255,24 +262,6 @@ class _MainState extends State<Main> {
                               ),
                             ),
                           ),
-                          TextField(
-                            maxLength: 12,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 22),
-                            textCapitalization: TextCapitalization.characters,
-                            decoration: const InputDecoration(
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black),
-                              ),
-                              hintText: "TITLE",
-                              hintStyle: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.black26,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            textAlign: TextAlign.center,
-                            controller: titleController,
-                          ),
                           Positioned(
                             bottom: 50,
                             right: size.width / 10,
@@ -283,7 +272,126 @@ class _MainState extends State<Main> {
                                 icon: const Icon(
                                   Icons.image,
                                 ),
-                                onPressed: () => pickImage(),
+                                onPressed: () {
+                                  pickImage();
+                                },
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 40,
+                            child: SizedBox(
+                              width: size.width,
+                              child: Padding(
+                                padding: const EdgeInsets.all(22.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        Colors.blueAccent.withOpacity(0.8),
+                                        Colors.purpleAccent.withOpacity(0.8),
+                                      ],
+                                    ),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(20),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.3),
+                                        spreadRadius: 5,
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 0),
+                                      ),
+                                    ],
+                                  ),
+                                  width: size.width,
+                                  height: 120,
+                                  child: Stack(
+                                    children: [
+                                      BlurFilter(
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: ValueListenableBuilder(
+                                            valueListenable: selectedPath,
+                                            builder: (context, value, child) {
+                                              return selected != null
+                                                  ? SizedBox(
+                                                      width: double.infinity,
+                                                      child: Image.file(
+                                                        File(value),
+                                                        fit: BoxFit.cover,
+                                                        colorBlendMode:
+                                                            BlendMode.darken,
+                                                        color: Colors.black12,
+                                                      ),
+                                                    )
+                                                  : const SizedBox();
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 25,
+                                        left: 25,
+                                        child: CircularPercentIndicator(
+                                          radius: 35,
+                                          lineWidth: 5,
+                                          percent: 1,
+                                          progressColor: Colors.white,
+                                          backgroundColor: Colors.white10,
+                                          circularStrokeCap:
+                                              CircularStrokeCap.round,
+                                          center: const Text(
+                                            "100%",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 15,
+                                        left: 120,
+                                        child: SizedBox(
+                                          width: 190,
+                                          child: TextField(
+                                            controller: titleController,
+                                            autofocus: true,
+                                            maxLength: 12,
+                                            textCapitalization:
+                                                TextCapitalization.characters,
+                                            decoration: const InputDecoration(
+                                              hintText: "TITLE",
+                                              hintStyle: TextStyle(
+                                                  color: Colors.white54),
+                                              counterStyle: TextStyle(
+                                                  color: Colors.transparent),
+                                              focusedBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.white30),
+                                              ),
+                                              enabledBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    width: 1,
+                                                    color: Colors.white10),
+                                              ),
+                                            ),
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -301,37 +409,35 @@ class _MainState extends State<Main> {
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: (counterCards.isNotEmpty
-                ? ReorderableListView(
-                    padding: const EdgeInsets.symmetric(vertical: 40),
-                    onReorder: (oldIndex, newIndex) {
-                      if (newIndex > oldIndex) {
-                        newIndex--;
-                      }
-                      final counterCard = counterObj.removeAt(oldIndex);
-                      counterObj.insert(newIndex, counterCard);
-                      getCounterCards();
-                      box.write("counterObj", counterObj);
-                      setState(() {});
-                    },
-                    children: [
-                      for (final counterCard in counterCards)
-                        SizedBox(
-                          key: ValueKey(counterCard),
-                          child: counterCard,
-                        ),
-                    ],
-                  )
-                : const Center(
-                    child: Text(
-                      "You haven't set any counter yet",
-                      style: TextStyle(color: Colors.black45),
-                    ),
-                  )),
-          ),
+          (counterCards.isNotEmpty
+              ? ReorderableListView(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > oldIndex) {
+                      newIndex--;
+                    }
+                    final counterCard = counterObj.removeAt(oldIndex);
+                    counterObj.insert(newIndex, counterCard);
+                    getCounterCards();
+                    box.write("counterObj", counterObj);
+                    setState(() {});
+                  },
+                  children: [
+                    for (final counterCard in counterCards)
+                      SizedBox(
+                        key: ValueKey(counterCard),
+                        child: counterCard,
+                      ),
+                  ],
+                )
+              : const Center(
+                  child: Text(
+                    "You haven't set any counter yet",
+                    style: TextStyle(color: Colors.black45),
+                  ),
+                )),
         ],
       ),
     );
