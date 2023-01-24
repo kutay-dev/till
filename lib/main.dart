@@ -297,7 +297,7 @@ class _MainState extends State<Main> {
                             child: SizedBox(
                               width: size.width,
                               child: Padding(
-                                padding: const EdgeInsets.all(22.0),
+                                padding: const EdgeInsets.all(30),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
@@ -368,7 +368,7 @@ class _MainState extends State<Main> {
                                       ),
                                       Positioned(
                                         top: 15,
-                                        left: 120,
+                                        left: 110,
                                         child: SizedBox(
                                           width: 190,
                                           child: TextField(
@@ -396,7 +396,7 @@ class _MainState extends State<Main> {
                                               ),
                                             ),
                                             style: const TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
                                             ),
@@ -427,7 +427,7 @@ class _MainState extends State<Main> {
         children: [
           (counterCards.isNotEmpty
               ? ReorderableListView(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  padding: const EdgeInsets.only(top: 50, bottom: 100),
                   onReorder: (oldIndex, newIndex) {
                     if (newIndex > oldIndex) {
                       newIndex--;
@@ -579,7 +579,7 @@ class _CounterCardState extends State<CounterCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(22, 12, 22, 12),
+      padding: const EdgeInsets.fromLTRB(30, 12, 30, 25),
       child: AnimatedContainer(
         curve: Curves.ease,
         duration: const Duration(milliseconds: 150),
@@ -669,7 +669,7 @@ class _CounterCardState extends State<CounterCard> {
               ),
               Positioned(
                 top: 25,
-                left: 120,
+                left: 110,
                 child: Row(
                   children: [
                     Column(
@@ -678,7 +678,7 @@ class _CounterCardState extends State<CounterCard> {
                         Text(
                           widget.title.toString().toUpperCase(),
                           style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -697,13 +697,15 @@ class _CounterCardState extends State<CounterCard> {
                                           "D: $daysLeft",
                                           style: const TextStyle(
                                               color: Colors.white54,
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.5),
                                         ),
                                         Text(
                                           "H: $hoursLeft",
                                           style: const TextStyle(
                                               color: Colors.white54,
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.5),
                                         ),
                                       ],
                                     ),
@@ -718,13 +720,15 @@ class _CounterCardState extends State<CounterCard> {
                                           "M: $minsLeft",
                                           style: const TextStyle(
                                               color: Colors.white54,
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.5),
                                         ),
                                         Text(
                                           "S: ${left.toStringAsFixed(0)}",
                                           style: const TextStyle(
                                               color: Colors.white54,
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.5),
                                         ),
                                       ],
                                     ),
@@ -856,8 +860,8 @@ class BlurFilter extends StatelessWidget {
   const BlurFilter({
     super.key,
     required this.child,
-    this.sigmaX = 1.5,
-    this.sigmaY = 1.5,
+    this.sigmaX = 1.3,
+    this.sigmaY = 1.3,
     this.radius = 20,
   });
 
