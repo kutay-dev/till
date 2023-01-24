@@ -200,8 +200,7 @@ class _MainState extends State<Main> {
                               data: const CupertinoThemeData(
                                 textTheme: CupertinoTextThemeData(
                                   dateTimePickerTextStyle: TextStyle(
-                                    fontSize: 18,
-                                  ),
+                                      fontSize: 18, color: Colors.black),
                                 ),
                               ),
                               child: SizedBox(
