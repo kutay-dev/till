@@ -511,7 +511,7 @@ class _CounterCardState extends State<CounterCard> {
       }
     }
     titleController.text = widget.title.toUpperCase();
-    getDifferece();
+    getDifference();
     cardHeight = 120;
     super.initState();
   }
@@ -527,7 +527,7 @@ class _CounterCardState extends State<CounterCard> {
     }
   }
 
-  void getDifferece() async {
+  void getDifference() async {
     widget.done = counterObj[rank]["done"];
 
     while (true) {
