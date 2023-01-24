@@ -42,6 +42,7 @@ dependencies:
   path_provider: ^2.0.11
   flutter_launcher_icons: ^0.11.0
   image_picker: ^0.7.2+1
+  fluttertoast: ^8.1.2
 
 dev_dependencies:
   flutter_test:

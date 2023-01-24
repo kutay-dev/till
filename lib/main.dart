@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:get_storage/get_storage.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() async {
   await GetStorage.init();
@@ -234,9 +235,22 @@ class _MainState extends State<Main> {
                               ),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  DateTime now = DateTime.now();
-                                  dateStr = "$date";
-                                  Duration diff = now.difference(date);
+                                  late Duration diff;
+                                  try {
+                                    DateTime now = DateTime.now();
+                                    dateStr = "$date";
+                                    diff = now.difference(date);
+                                  } catch (e) {
+                                    Fluttertoast.showToast(
+                                        msg: "Enter a valid time",
+                                        toastLength: Toast.LENGTH_LONG,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 2,
+                                        backgroundColor: Colors.red[300],
+                                        textColor: Colors.white,
+                                        fontSize: 18);
+                                    return;
+                                  }
 
                                   if (diff.isNegative) {
                                     Navigator.of(context).pop();
