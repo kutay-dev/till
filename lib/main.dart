@@ -761,7 +761,7 @@ class _CounterCardState extends State<CounterCard> {
                             });
                           }
                         },
-                        icon: const Icon(Icons.image),
+                        icon: const Icon(Icons.image_outlined),
                       ),
                     ),
                     Positioned(
