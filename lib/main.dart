@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:ui';
 import 'dart:io';
@@ -157,6 +158,10 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     size = MediaQuery.of(context).size;
     return Scaffold(
       floatingActionButton: Stack(
