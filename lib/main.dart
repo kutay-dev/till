@@ -219,8 +219,8 @@ class _MainState extends State<Main> {
                             padding: const EdgeInsets.only(bottom: 50),
                             alignment: Alignment.bottomCenter,
                             child: Container(
-                              width: 170,
-                              height: 50,
+                              width: 148,
+                              height: 57.5,
                               decoration: BoxDecoration(
                                 color: Colors.black87,
                                 borderRadius: BorderRadius.circular(10),
