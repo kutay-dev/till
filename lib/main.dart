@@ -222,14 +222,7 @@ class _MainState extends State<Main> {
                               width: 170,
                               height: 50,
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.blueAccent,
-                                    Colors.purpleAccent
-                                  ],
-                                ),
+                                color: Colors.black87,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: ElevatedButton(
@@ -284,6 +277,7 @@ class _MainState extends State<Main> {
                               child: IconButton(
                                 icon: const Icon(
                                   Icons.image,
+                                  color: Colors.black87,
                                 ),
                                 onPressed: () {
                                   pickImage();
@@ -299,14 +293,7 @@ class _MainState extends State<Main> {
                                 padding: const EdgeInsets.all(30),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        Colors.blueAccent.withOpacity(0.8),
-                                        Colors.purpleAccent.withOpacity(0.8),
-                                      ],
-                                    ),
+                                    color: Colors.black87,
                                     borderRadius: const BorderRadius.all(
                                       Radius.circular(20),
                                     ),
@@ -599,16 +586,9 @@ class _CounterCardState extends State<CounterCard> {
             : null,
         height: cardHeight,
         child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Colors.blueAccent.withOpacity(0.8),
-                Colors.purpleAccent.withOpacity(0.8),
-              ],
-            ),
-            borderRadius: const BorderRadius.all(
+          decoration: const BoxDecoration(
+            color: Colors.black87,
+            borderRadius: BorderRadius.all(
               Radius.circular(20),
             ),
           ),
