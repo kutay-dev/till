@@ -804,6 +804,7 @@ class _CounterCardState extends State<CounterCard> {
                       left: 85,
                       right: 85,
                       child: TextField(
+                        enabled: showOptions,
                         maxLength: 12,
                         textCapitalization: TextCapitalization.characters,
                         decoration: InputDecoration(
