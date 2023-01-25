@@ -368,7 +368,7 @@ class _MainState extends State<Main> {
                                               hintStyle: TextStyle(
                                                   color: Colors.white54),
                                               counterStyle: TextStyle(
-                                                  color: Colors.transparent),
+                                                  color: Colors.white30),
                                               focusedBorder:
                                                   UnderlineInputBorder(
                                                 borderSide: BorderSide(
