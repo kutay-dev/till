@@ -276,7 +276,7 @@ class _MainState extends State<Main> {
                               height: 50,
                               child: IconButton(
                                 icon: const Icon(
-                                  Icons.image,
+                                  Icons.add_photo_alternate_outlined,
                                   color: Colors.black87,
                                 ),
                                 onPressed: () {
