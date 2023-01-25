@@ -569,21 +569,19 @@ class _CounterCardState extends State<CounterCard> {
       child: AnimatedContainer(
         curve: Curves.ease,
         duration: const Duration(milliseconds: 150),
-        decoration: widget.image == "null"
-            ? BoxDecoration(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(25),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    spreadRadius: 5,
-                    blurRadius: 10,
-                    offset: const Offset(0, 0),
-                  ),
-                ],
-              )
-            : null,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(25),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 5,
+              blurRadius: 10,
+              offset: const Offset(0, 0),
+            ),
+          ],
+        ),
         height: cardHeight,
         child: Container(
           decoration: const BoxDecoration(
@@ -597,20 +595,7 @@ class _CounterCardState extends State<CounterCard> {
               widget.image == "null"
                   ? const SizedBox()
                   : BlurFilter(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(25),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              spreadRadius: 5,
-                              blurRadius: 10,
-                              offset: const Offset(0, 0),
-                            ),
-                          ],
-                        ),
+                      child: SizedBox(
                         width: double.infinity,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
