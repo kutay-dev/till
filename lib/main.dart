@@ -142,7 +142,7 @@ class _MainState extends State<Main> {
                   context: context,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
+                      top: Radius.circular(40),
                     ),
                   ),
                   builder: (BuildContext context) {
