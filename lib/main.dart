@@ -35,56 +35,6 @@ class Main extends StatefulWidget {
   State<Main> createState() => _MainState();
 }
 
-void confirmDelete(
-    BuildContext context, num id, dynamic deleteCounter, String title) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return BackdropFilter(
-        filter: ImageFilter.blur(),
-        child: AlertDialog(
-          title: Text(
-            (title.isEmpty
-                ? "Delete unnamed counter?"
-                : 'Delete "$title" counter?'),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent),
-              child: const Text(
-                "No",
-                style: TextStyle(color: Colors.black45),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                for (int i = 0; i < counterObj.length; i++) {
-                  if (counterObj[i]["id"] == id) {
-                    deleteCounter(i);
-                    Navigator.pop(context);
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent),
-              child: const Text(
-                "Yes",
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
 List counterObj = box.read("counterObj") ?? [];
 
 dynamic size;
@@ -492,6 +442,8 @@ class _CounterCardState extends State<CounterCard> {
 
   late int rank;
   late double cardHeight;
+  late double optionsButtonsBottom;
+  late double optionTextFieldBottom;
 
   @override
   void initState() {
@@ -504,6 +456,8 @@ class _CounterCardState extends State<CounterCard> {
     titleController.text = widget.title.toUpperCase();
     getDifference();
     cardHeight = 120;
+    optionsButtonsBottom = 0;
+    optionTextFieldBottom = -15;
     super.initState();
   }
 
@@ -560,12 +514,29 @@ class _CounterCardState extends State<CounterCard> {
     setState(() {});
   }
 
+  void animateConfirmDeleteHeight() async {
+    cardHeight = cardHeight == 170 ? 220 : 170;
+    await Future.delayed(const Duration(milliseconds: 150));
+    optionsButtonsBottom = optionsButtonsBottom == 0 ? 50 : 0;
+    optionTextFieldBottom = optionTextFieldBottom == -15 ? 35 : -15;
+    setState(() {});
+  }
+
   double optionsOpacity = 0;
 
   void animateOptionsOpacity() {
     optionsOpacity = optionsOpacity == 1 ? 0 : 1;
     setState(() {});
   }
+
+  double confirmDeleteOpacity = 0;
+
+  void animateConfirmDeleteOpacity(double opacity) {
+    confirmDeleteOpacity = opacity;
+    setState(() {});
+  }
+
+  bool deleteEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -742,9 +713,58 @@ class _CounterCardState extends State<CounterCard> {
                       widget.getCounterCards();
                     }
                     showOptions = !showOptions;
+                    animateConfirmDeleteOpacity(0);
+                    if (showOptions) {
+                      deleteEnabled = true;
+                    }
 
                     setState(() {});
                   },
+                ),
+              ),
+              Container(
+                alignment: Alignment.bottomCenter,
+                child: AnimatedOpacity(
+                  opacity: confirmDeleteOpacity,
+                  duration: const Duration(milliseconds: 300),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        width: 70,
+                        height: 35,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.black26,
+                              shadowColor: Colors.transparent),
+                          onPressed: (() {
+                            animateConfirmDeleteHeight();
+                            animateConfirmDeleteOpacity(0);
+                            deleteEnabled = true;
+                            setState(() {});
+                          }),
+                          child: const Text("no "),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        width: 70,
+                        height: 35,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.black87,
+                              backgroundColor: Colors.white,
+                              shadowColor: Colors.transparent),
+                          onPressed: (() {
+                            widget.deleteCounter(rank);
+                          }),
+                          child: const Text("yes "),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               AnimatedOpacity(
@@ -752,8 +772,9 @@ class _CounterCardState extends State<CounterCard> {
                 opacity: optionsOpacity,
                 child: Stack(
                   children: [
-                    Positioned(
-                      bottom: 0,
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 100),
+                      bottom: optionsButtonsBottom,
                       right: 0,
                       child: IconButton(
                         color: Colors.white,
@@ -769,8 +790,9 @@ class _CounterCardState extends State<CounterCard> {
                         icon: const Icon(Icons.image_outlined),
                       ),
                     ),
-                    Positioned(
-                      bottom: -15,
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 100),
+                      bottom: optionTextFieldBottom,
                       left: 85,
                       right: 85,
                       child: TextField(
@@ -796,15 +818,19 @@ class _CounterCardState extends State<CounterCard> {
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Positioned(
-                      bottom: 0,
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 100),
+                      bottom: optionsButtonsBottom,
                       left: 0,
                       child: IconButton(
                         color: Colors.white,
                         onPressed: () {
-                          if (optionsOpacity == 1) {
-                            confirmDelete(context, widget.id,
-                                widget.deleteCounter, widget.title);
+                          if (optionsOpacity == 1 && deleteEnabled) {
+                            animateConfirmDeleteHeight();
+                            animateConfirmDeleteOpacity(1);
+                            if (confirmDeleteOpacity == 1) {
+                              deleteEnabled = false;
+                            }
                             setState(() {});
                           }
                         },
