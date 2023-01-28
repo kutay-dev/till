@@ -69,7 +69,7 @@ class _MainState extends State<Main> {
       counterCards.add(CounterCard(
         title: counterObj[i]["title"],
         id: counterObj[i]["id"],
-        firstLeft: counterObj[i]["leftt"],
+        firstLeft: counterObj[i]["left"],
         date: counterObj[i]["date"],
         done: counterObj[i]["done"],
         deleteCounter: deleteCounter,
@@ -95,7 +95,7 @@ class _MainState extends State<Main> {
     counterObj.add({
       "title": titleController.text,
       "id": id,
-      "leftt": left,
+      "left": left,
       "date": dateStr,
       "done": false,
       "image": selected != null ? selected!.path : "null",
@@ -109,7 +109,7 @@ class _MainState extends State<Main> {
   }
 
   void sortCounters() {
-    counterObj.sort((a, b) => a["leftt"].compareTo(b["leftt"]));
+    counterObj.sort((a, b) => a["left"].compareTo(b["left"]));
     reverseCounters = !reverseCounters;
     if (reverseCounters) {
       counterObj = counterObj.reversed.toList();
@@ -163,12 +163,13 @@ class _MainState extends State<Main> {
                 ),
               ),
               const SizedBox(
-                  width: 60,
-                  height: 0,
-                  child: Divider(
-                    thickness: 1,
-                    color: Colors.white,
-                  )),
+                width: 60,
+                height: 0,
+                child: Divider(
+                  thickness: 1,
+                  color: Colors.white,
+                ),
+              ),
               SizedBox(
                 width: 60,
                 height: 60,
