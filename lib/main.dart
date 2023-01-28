@@ -147,13 +147,7 @@ class _MainState extends State<Main> {
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(10),
-                    topLeft: Radius.circular(10),
-                  ),
-                ),
+              SizedBox(
                 width: 60,
                 height: 40,
                 child: InkWell(
@@ -175,13 +169,7 @@ class _MainState extends State<Main> {
                     thickness: 1,
                     color: Colors.white,
                   )),
-              Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(10),
-                  ),
-                ),
+              SizedBox(
                 width: 60,
                 height: 60,
                 child: InkWell(
