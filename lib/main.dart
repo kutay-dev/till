@@ -118,6 +118,228 @@ class _MainState extends State<Main> {
     getCounterCards();
   }
 
+  void showAddCounterSheet() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(40),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return SizedBox(
+          child: Stack(
+            children: [
+              Positioned(
+                top: 115,
+                child: CupertinoTheme(
+                  data: const CupertinoThemeData(
+                    textTheme: CupertinoTextThemeData(
+                      dateTimePickerTextStyle:
+                          TextStyle(fontSize: 18, color: Colors.black),
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: size.height / 1.2,
+                    width: size.width,
+                    child: CupertinoDatePicker(
+                      initialDateTime: DateTime.now(),
+                      onDateTimeChanged: (value) {
+                        date = value;
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(bottom: 50),
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: 148,
+                  height: 57.5,
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      late Duration diff;
+                      try {
+                        DateTime now = DateTime.now();
+                        dateStr = "$date";
+                        diff = now.difference(date);
+                      } catch (e) {
+                        Fluttertoast.showToast(
+                            msg: "Enter a valid time",
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 2,
+                            backgroundColor: Colors.red[300],
+                            textColor: Colors.white,
+                            fontSize: 18);
+                        return;
+                      }
+
+                      if (diff.isNegative) {
+                        Navigator.of(context).pop();
+                        addCounterCard();
+                        setState(() {});
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                    ),
+                    child: const Text(
+                      "Add Counter",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 50,
+                right: size.width / 10,
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.add_photo_alternate_outlined,
+                      color: Colors.black87,
+                    ),
+                    onPressed: () {
+                      pickImage();
+                    },
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 40,
+                child: SizedBox(
+                  width: size.width,
+                  child: Padding(
+                    padding: const EdgeInsets.all(30),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black87,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(20),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 5,
+                            blurRadius: 10,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                      width: size.width,
+                      height: 120,
+                      child: Stack(
+                        children: [
+                          BlurFilter(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: ValueListenableBuilder(
+                                valueListenable: selectedPath,
+                                builder: (context, value, child) {
+                                  return selected != null
+                                      ? SizedBox(
+                                          width: double.infinity,
+                                          child: Image.file(
+                                            File(value),
+                                            fit: BoxFit.cover,
+                                            colorBlendMode: BlendMode.darken,
+                                            color: Colors.black12,
+                                          ),
+                                        )
+                                      : const SizedBox();
+                                },
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 25,
+                            left: 25,
+                            child: CircularPercentIndicator(
+                              radius: 35,
+                              lineWidth: 5,
+                              percent: 1,
+                              progressColor: Colors.white,
+                              backgroundColor: Colors.white10,
+                              circularStrokeCap: CircularStrokeCap.round,
+                              center: const Text(
+                                "100%",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 15,
+                            left: 110,
+                            child: SizedBox(
+                              width: 190,
+                              child: TextField(
+                                controller: titleController,
+                                autofocus: true,
+                                maxLength: 12,
+                                textCapitalization:
+                                    TextCapitalization.characters,
+                                decoration: const InputDecoration(
+                                  hintText: "TITLE",
+                                  hintStyle: TextStyle(color: Colors.white54),
+                                  counterStyle:
+                                      TextStyle(color: Colors.white30),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.white30),
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        width: 1, color: Colors.white10),
+                                  ),
+                                ),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  double floatingButtonsPosition = 0;
+  double floatingButtonsOpacity = 0;
+
+  void animateFloatingButtons() {
+    floatingButtonsPosition = floatingButtonsPosition == 0 ? 70 : 0;
+    floatingButtonsOpacity = floatingButtonsOpacity == 0 ? 1 : 0;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -130,287 +352,92 @@ class _MainState extends State<Main> {
         children: [
           Positioned(
             bottom: 0,
+            right: 0,
             child: BlurFilter(
-              radius: 10,
+              radius: 100,
               sigmaX: 10,
               sigmaY: 10,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.black12,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(100),
                 ),
                 width: 60,
-                height: 100,
+                height: 60,
               ),
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SizedBox(
-                width: 60,
-                height: 40,
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    sortCounters();
-                  },
-                  child: const Icon(
-                    Icons.sort,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 60,
-                height: 0,
-                child: Divider(
-                  thickness: 1,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(
+          AnimatedPositioned(
+            bottom: 0,
+            right: floatingButtonsPosition,
+            duration: Duration(milliseconds: 150),
+            curve: Curves.ease,
+            child: AnimatedOpacity(
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 150),
+              opacity: floatingButtonsOpacity,
+              child: Container(
                 width: 60,
                 height: 60,
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(100),
                   ),
-                  onTap: () {
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(40),
-                        ),
-                      ),
-                      builder: (BuildContext context) {
-                        return SizedBox(
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                top: 115,
-                                child: CupertinoTheme(
-                                  data: const CupertinoThemeData(
-                                    textTheme: CupertinoTextThemeData(
-                                      dateTimePickerTextStyle: TextStyle(
-                                          fontSize: 18, color: Colors.black),
-                                    ),
-                                  ),
-                                  child: SizedBox(
-                                    height: size.height / 1.2,
-                                    width: size.width,
-                                    child: CupertinoDatePicker(
-                                      initialDateTime: DateTime.now(),
-                                      onDateTimeChanged: (value) {
-                                        date = value;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.only(bottom: 50),
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  width: 148,
-                                  height: 57.5,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black87,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      late Duration diff;
-                                      try {
-                                        DateTime now = DateTime.now();
-                                        dateStr = "$date";
-                                        diff = now.difference(date);
-                                      } catch (e) {
-                                        Fluttertoast.showToast(
-                                            msg: "Enter a valid time",
-                                            toastLength: Toast.LENGTH_LONG,
-                                            gravity: ToastGravity.CENTER,
-                                            timeInSecForIosWeb: 2,
-                                            backgroundColor: Colors.red[300],
-                                            textColor: Colors.white,
-                                            fontSize: 18);
-                                        return;
-                                      }
-
-                                      if (diff.isNegative) {
-                                        Navigator.of(context).pop();
-                                        addCounterCard();
-                                        setState(() {});
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10),
-                                        ),
-                                      ),
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                    ),
-                                    child: const Text(
-                                      "Add Counter",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 50,
-                                right: size.width / 10,
-                                child: SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.add_photo_alternate_outlined,
-                                      color: Colors.black87,
-                                    ),
-                                    onPressed: () {
-                                      pickImage();
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 40,
-                                child: SizedBox(
-                                  width: size.width,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(30),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black87,
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(20),
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.3),
-                                            spreadRadius: 5,
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 0),
-                                          ),
-                                        ],
-                                      ),
-                                      width: size.width,
-                                      height: 120,
-                                      child: Stack(
-                                        children: [
-                                          BlurFilter(
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              child: ValueListenableBuilder(
-                                                valueListenable: selectedPath,
-                                                builder:
-                                                    (context, value, child) {
-                                                  return selected != null
-                                                      ? SizedBox(
-                                                          width:
-                                                              double.infinity,
-                                                          child: Image.file(
-                                                            File(value),
-                                                            fit: BoxFit.cover,
-                                                            colorBlendMode:
-                                                                BlendMode
-                                                                    .darken,
-                                                            color:
-                                                                Colors.black12,
-                                                          ),
-                                                        )
-                                                      : const SizedBox();
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 25,
-                                            left: 25,
-                                            child: CircularPercentIndicator(
-                                              radius: 35,
-                                              lineWidth: 5,
-                                              percent: 1,
-                                              progressColor: Colors.white,
-                                              backgroundColor: Colors.white10,
-                                              circularStrokeCap:
-                                                  CircularStrokeCap.round,
-                                              center: const Text(
-                                                "100%",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 15,
-                                            left: 110,
-                                            child: SizedBox(
-                                              width: 190,
-                                              child: TextField(
-                                                controller: titleController,
-                                                autofocus: true,
-                                                maxLength: 12,
-                                                textCapitalization:
-                                                    TextCapitalization
-                                                        .characters,
-                                                decoration:
-                                                    const InputDecoration(
-                                                  hintText: "TITLE",
-                                                  hintStyle: TextStyle(
-                                                      color: Colors.white54),
-                                                  counterStyle: TextStyle(
-                                                      color: Colors.white30),
-                                                  focusedBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Colors.white30),
-                                                  ),
-                                                  enabledBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        width: 1,
-                                                        color: Colors.white10),
-                                                  ),
-                                                ),
-                                                style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
+                ),
+                child: IconButton(
+                  color: Colors.white,
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    showAddCounterSheet();
                   },
                 ),
               ),
-            ],
+            ),
+          ),
+          AnimatedPositioned(
+            bottom: floatingButtonsPosition,
+            right: 0,
+            duration: Duration(milliseconds: 150),
+            curve: Curves.ease,
+            child: AnimatedOpacity(
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 150),
+              opacity: floatingButtonsOpacity,
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(100),
+                  ),
+                ),
+                child: IconButton(
+                  color: Colors.white,
+                  icon: Icon(Icons.sort),
+                  onPressed: () {
+                    sortCounters();
+                  },
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: SizedBox(
+              width: 60,
+              height: 60,
+              child: IconButton(
+                color: Colors.white,
+                splashRadius: 30,
+                onPressed: () {
+                  animateFloatingButtons();
+                },
+                icon: Icon(Icons.more_horiz),
+              ),
+            ),
           ),
         ],
       ),
