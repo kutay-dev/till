@@ -370,24 +370,24 @@ class _MainState extends State<Main> {
           AnimatedPositioned(
             bottom: 0,
             right: floatingButtonsPosition,
-            duration: Duration(milliseconds: 150),
+            duration: const Duration(milliseconds: 150),
             curve: Curves.ease,
             child: AnimatedOpacity(
               curve: Curves.ease,
-              duration: Duration(milliseconds: 150),
+              duration: const Duration(milliseconds: 150),
               opacity: floatingButtonsOpacity,
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.black,
-                  borderRadius: const BorderRadius.all(
+                  borderRadius: BorderRadius.all(
                     Radius.circular(100),
                   ),
                 ),
                 child: IconButton(
                   color: Colors.white,
-                  icon: Icon(Icons.add),
+                  icon: const Icon(Icons.add),
                   onPressed: () {
                     showAddCounterSheet();
                   },
@@ -398,24 +398,24 @@ class _MainState extends State<Main> {
           AnimatedPositioned(
             bottom: floatingButtonsPosition,
             right: 0,
-            duration: Duration(milliseconds: 150),
+            duration: const Duration(milliseconds: 150),
             curve: Curves.ease,
             child: AnimatedOpacity(
               curve: Curves.ease,
-              duration: Duration(milliseconds: 150),
+              duration: const Duration(milliseconds: 150),
               opacity: floatingButtonsOpacity,
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.black,
-                  borderRadius: const BorderRadius.all(
+                  borderRadius: BorderRadius.all(
                     Radius.circular(100),
                   ),
                 ),
                 child: IconButton(
                   color: Colors.white,
-                  icon: Icon(Icons.sort),
+                  icon: const Icon(Icons.sort),
                   onPressed: () {
                     sortCounters();
                   },
@@ -435,7 +435,7 @@ class _MainState extends State<Main> {
                 onPressed: () {
                   animateFloatingButtons();
                 },
-                icon: Icon(Icons.more_horiz),
+                icon: const Icon(Icons.more_horiz),
               ),
             ),
           ),
