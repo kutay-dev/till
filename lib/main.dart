@@ -50,6 +50,8 @@ class _MainState extends State<Main> {
   PickedFile? selected;
   ValueNotifier<String> selectedPath = ValueNotifier("");
 
+  bool reverseCounters = false;
+
   Future<void> pickImage() async {
     selected = await ImagePicker().getImage(source: ImageSource.gallery);
     selectedPath.value = selected!.path;
@@ -106,6 +108,16 @@ class _MainState extends State<Main> {
     setState(() {});
   }
 
+  void sortCounters() {
+    counterObj.sort((a, b) => a["leftt"].compareTo(b["leftt"]));
+    reverseCounters = !reverseCounters;
+    if (reverseCounters) {
+      counterObj = counterObj.reversed.toList();
+    }
+
+    getCounterCards();
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -115,252 +127,301 @@ class _MainState extends State<Main> {
     size = MediaQuery.of(context).size;
     return Scaffold(
       floatingActionButton: Stack(
-        alignment: Alignment.center,
         children: [
-          BlurFilter(
-            radius: 100,
-            sigmaX: 10,
-            sigmaY: 10,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.black12,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(200),
+          Positioned(
+            bottom: 0,
+            child: BlurFilter(
+              radius: 10,
+              sigmaX: 10,
+              sigmaY: 10,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.circular(10),
                 ),
+                width: 60,
+                height: 100,
               ),
-              width: 60,
-              height: 60,
             ),
           ),
-          SizedBox(
-            width: 60,
-            height: 60,
-            child: IconButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  isScrollControlled: true,
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(40),
-                    ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    topLeft: Radius.circular(10),
                   ),
-                  builder: (BuildContext context) {
-                    return SizedBox(
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: 115,
-                            child: CupertinoTheme(
-                              data: const CupertinoThemeData(
-                                textTheme: CupertinoTextThemeData(
-                                  dateTimePickerTextStyle: TextStyle(
-                                      fontSize: 18, color: Colors.black),
-                                ),
-                              ),
-                              child: SizedBox(
-                                height: size.height / 1.2,
-                                width: size.width,
-                                child: CupertinoDatePicker(
-                                  initialDateTime: DateTime.now(),
-                                  onDateTimeChanged: (value) {
-                                    date = value;
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(bottom: 50),
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              width: 148,
-                              height: 57.5,
-                              decoration: BoxDecoration(
-                                color: Colors.black87,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  late Duration diff;
-                                  try {
-                                    DateTime now = DateTime.now();
-                                    dateStr = "$date";
-                                    diff = now.difference(date);
-                                  } catch (e) {
-                                    Fluttertoast.showToast(
-                                        msg: "Enter a valid time",
-                                        toastLength: Toast.LENGTH_LONG,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 2,
-                                        backgroundColor: Colors.red[300],
-                                        textColor: Colors.white,
-                                        fontSize: 18);
-                                    return;
-                                  }
-
-                                  if (diff.isNegative) {
-                                    Navigator.of(context).pop();
-                                    addCounterCard();
-                                    setState(() {});
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
+                ),
+                width: 60,
+                height: 40,
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    sortCounters();
+                  },
+                  child: const Icon(
+                    Icons.sort,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                  width: 60,
+                  height: 0,
+                  child: Divider(
+                    thickness: 1,
+                    color: Colors.white,
+                  )),
+              Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                  ),
+                ),
+                width: 60,
+                height: 60,
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  child: const Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  onTap: () {
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(40),
+                        ),
+                      ),
+                      builder: (BuildContext context) {
+                        return SizedBox(
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: 115,
+                                child: CupertinoTheme(
+                                  data: const CupertinoThemeData(
+                                    textTheme: CupertinoTextThemeData(
+                                      dateTimePickerTextStyle: TextStyle(
+                                          fontSize: 18, color: Colors.black),
                                     ),
                                   ),
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                ),
-                                child: const Text(
-                                  "Add Counter",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                                  child: SizedBox(
+                                    height: size.height / 1.2,
+                                    width: size.width,
+                                    child: CupertinoDatePicker(
+                                      initialDateTime: DateTime.now(),
+                                      onDateTimeChanged: (value) {
+                                        date = value;
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 50,
-                            right: size.width / 10,
-                            child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.add_photo_alternate_outlined,
-                                  color: Colors.black87,
-                                ),
-                                onPressed: () {
-                                  pickImage();
-                                },
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 40,
-                            child: SizedBox(
-                              width: size.width,
-                              child: Padding(
-                                padding: const EdgeInsets.all(30),
+                              Container(
+                                padding: const EdgeInsets.only(bottom: 50),
+                                alignment: Alignment.bottomCenter,
                                 child: Container(
+                                  width: 148,
+                                  height: 57.5,
                                   decoration: BoxDecoration(
                                     color: Colors.black87,
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(20),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.3),
-                                        spreadRadius: 5,
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 0),
-                                      ),
-                                    ],
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  width: size.width,
-                                  height: 120,
-                                  child: Stack(
-                                    children: [
-                                      BlurFilter(
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: ValueListenableBuilder(
-                                            valueListenable: selectedPath,
-                                            builder: (context, value, child) {
-                                              return selected != null
-                                                  ? SizedBox(
-                                                      width: double.infinity,
-                                                      child: Image.file(
-                                                        File(value),
-                                                        fit: BoxFit.cover,
-                                                        colorBlendMode:
-                                                            BlendMode.darken,
-                                                        color: Colors.black12,
-                                                      ),
-                                                    )
-                                                  : const SizedBox();
-                                            },
-                                          ),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      late Duration diff;
+                                      try {
+                                        DateTime now = DateTime.now();
+                                        dateStr = "$date";
+                                        diff = now.difference(date);
+                                      } catch (e) {
+                                        Fluttertoast.showToast(
+                                            msg: "Enter a valid time",
+                                            toastLength: Toast.LENGTH_LONG,
+                                            gravity: ToastGravity.CENTER,
+                                            timeInSecForIosWeb: 2,
+                                            backgroundColor: Colors.red[300],
+                                            textColor: Colors.white,
+                                            fontSize: 18);
+                                        return;
+                                      }
+
+                                      if (diff.isNegative) {
+                                        Navigator.of(context).pop();
+                                        addCounterCard();
+                                        setState(() {});
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
                                         ),
                                       ),
-                                      Positioned(
-                                        top: 25,
-                                        left: 25,
-                                        child: CircularPercentIndicator(
-                                          radius: 35,
-                                          lineWidth: 5,
-                                          percent: 1,
-                                          progressColor: Colors.white,
-                                          backgroundColor: Colors.white10,
-                                          circularStrokeCap:
-                                              CircularStrokeCap.round,
-                                          center: const Text(
-                                            "100%",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 15,
-                                        left: 110,
-                                        child: SizedBox(
-                                          width: 190,
-                                          child: TextField(
-                                            controller: titleController,
-                                            autofocus: true,
-                                            maxLength: 12,
-                                            textCapitalization:
-                                                TextCapitalization.characters,
-                                            decoration: const InputDecoration(
-                                              hintText: "TITLE",
-                                              hintStyle: TextStyle(
-                                                  color: Colors.white54),
-                                              counterStyle: TextStyle(
-                                                  color: Colors.white30),
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.white30),
-                                              ),
-                                              enabledBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    width: 1,
-                                                    color: Colors.white10),
-                                              ),
-                                            ),
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    child: const Text(
+                                      "Add Counter",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                              Positioned(
+                                bottom: 50,
+                                right: size.width / 10,
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      Icons.add_photo_alternate_outlined,
+                                      color: Colors.black87,
+                                    ),
+                                    onPressed: () {
+                                      pickImage();
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 40,
+                                child: SizedBox(
+                                  width: size.width,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(30),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.black87,
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.3),
+                                            spreadRadius: 5,
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 0),
+                                          ),
+                                        ],
+                                      ),
+                                      width: size.width,
+                                      height: 120,
+                                      child: Stack(
+                                        children: [
+                                          BlurFilter(
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: ValueListenableBuilder(
+                                                valueListenable: selectedPath,
+                                                builder:
+                                                    (context, value, child) {
+                                                  return selected != null
+                                                      ? SizedBox(
+                                                          width:
+                                                              double.infinity,
+                                                          child: Image.file(
+                                                            File(value),
+                                                            fit: BoxFit.cover,
+                                                            colorBlendMode:
+                                                                BlendMode
+                                                                    .darken,
+                                                            color:
+                                                                Colors.black12,
+                                                          ),
+                                                        )
+                                                      : const SizedBox();
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: 25,
+                                            left: 25,
+                                            child: CircularPercentIndicator(
+                                              radius: 35,
+                                              lineWidth: 5,
+                                              percent: 1,
+                                              progressColor: Colors.white,
+                                              backgroundColor: Colors.white10,
+                                              circularStrokeCap:
+                                                  CircularStrokeCap.round,
+                                              center: const Text(
+                                                "100%",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: 15,
+                                            left: 110,
+                                            child: SizedBox(
+                                              width: 190,
+                                              child: TextField(
+                                                controller: titleController,
+                                                autofocus: true,
+                                                maxLength: 12,
+                                                textCapitalization:
+                                                    TextCapitalization
+                                                        .characters,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  hintText: "TITLE",
+                                                  hintStyle: TextStyle(
+                                                      color: Colors.white54),
+                                                  counterStyle: TextStyle(
+                                                      color: Colors.white30),
+                                                  focusedBorder:
+                                                      UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.white30),
+                                                  ),
+                                                  enabledBorder:
+                                                      UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        width: 1,
+                                                        color: Colors.white10),
+                                                  ),
+                                                ),
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-              icon: const Icon(Icons.add),
-              iconSize: 30,
-              color: Colors.white,
-              splashRadius: 0.1,
-            ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
