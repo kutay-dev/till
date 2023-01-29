@@ -280,8 +280,9 @@ class _MainState extends State<Main> {
                               center: const Text(
                                 "100%",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -332,12 +333,41 @@ class _MainState extends State<Main> {
   }
 
   double floatingButtonsPosition = 0;
+  double floatingSortButtonPosition = 0;
   double floatingButtonsOpacity = 0;
 
   void animateFloatingButtons() {
-    floatingButtonsPosition = floatingButtonsPosition == 0 ? 70 : 0;
+    floatingDeleteIconsOpacity = 0;
+    floatingIconsOpacity = 1;
+    floatingButtonsPosition = floatingButtonsPosition == 0 ? 90 : 0;
+    floatingSortButtonPosition = floatingSortButtonPosition == 0 ? 70 : 0;
     floatingButtonsOpacity = floatingButtonsOpacity == 0 ? 1 : 0;
+
     setState(() {});
+  }
+
+  double floatingIconsOpacity = 1;
+  double floatingDeleteIconsOpacity = 0;
+
+  void animateDeleteButtons() async {
+    if (floatingDeleteIconsOpacity == 0) {
+      floatingIconsOpacity = floatingIconsOpacity == 1 ? 0 : 1;
+      setState(() {});
+      await Future.delayed(const Duration(milliseconds: 100));
+      floatingDeleteIconsOpacity = floatingDeleteIconsOpacity == 0 ? 1 : 0;
+      setState(() {});
+    } else {
+      setState(() {});
+      floatingDeleteIconsOpacity = floatingDeleteIconsOpacity == 0 ? 1 : 0;
+      await Future.delayed(const Duration(milliseconds: 100));
+      floatingIconsOpacity = floatingIconsOpacity == 1 ? 0 : 1;
+      setState(() {});
+    }
+  }
+
+  void deleteAllCounters() {
+    counterObj.clear();
+    getCounterCards();
   }
 
   @override
@@ -387,9 +417,72 @@ class _MainState extends State<Main> {
                 ),
                 child: IconButton(
                   color: Colors.white,
-                  icon: const Icon(Icons.add),
+                  icon: Stack(
+                    children: [
+                      AnimatedOpacity(
+                        opacity: floatingIconsOpacity,
+                        duration: const Duration(milliseconds: 100),
+                        child: const Icon(Icons.add),
+                      ),
+                      AnimatedOpacity(
+                        opacity: floatingDeleteIconsOpacity,
+                        duration: const Duration(milliseconds: 100),
+                        child: const Icon(Icons.check),
+                      ),
+                    ],
+                  ),
                   onPressed: () {
-                    showAddCounterSheet();
+                    if (floatingDeleteIconsOpacity == 0) {
+                      showAddCounterSheet();
+                    } else {
+                      deleteAllCounters();
+                      animateFloatingButtons();
+                    }
+                  },
+                ),
+              ),
+            ),
+          ),
+          AnimatedPositioned(
+            bottom: floatingSortButtonPosition,
+            right: floatingSortButtonPosition,
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.ease,
+            child: AnimatedOpacity(
+              curve: Curves.ease,
+              duration: const Duration(milliseconds: 150),
+              opacity: floatingButtonsOpacity,
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: const BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(100),
+                  ),
+                ),
+                child: IconButton(
+                  color: Colors.white,
+                  icon: Stack(
+                    children: [
+                      AnimatedOpacity(
+                        opacity: floatingIconsOpacity,
+                        duration: const Duration(milliseconds: 100),
+                        child: const Icon(Icons.sort),
+                      ),
+                      AnimatedOpacity(
+                        opacity: floatingDeleteIconsOpacity,
+                        duration: const Duration(milliseconds: 100),
+                        child: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    if (floatingDeleteIconsOpacity == 0) {
+                      sortCounters();
+                    } else {
+                      animateDeleteButtons();
+                    }
                   },
                 ),
               ),
@@ -415,9 +508,9 @@ class _MainState extends State<Main> {
                 ),
                 child: IconButton(
                   color: Colors.white,
-                  icon: const Icon(Icons.sort),
+                  icon: const Icon(Icons.delete),
                   onPressed: () {
-                    sortCounters();
+                    animateDeleteButtons();
                   },
                 ),
               ),
@@ -435,7 +528,10 @@ class _MainState extends State<Main> {
                 onPressed: () {
                   animateFloatingButtons();
                 },
-                icon: const Icon(Icons.more_horiz),
+                icon: const Icon(
+                  Icons.more_horiz,
+                  size: 27,
+                ),
               ),
             ),
           ),
@@ -680,7 +776,9 @@ class _CounterCardState extends State<CounterCard> {
                       : Text(
                           "${(100 + perc).toStringAsFixed(0)}%",
                           style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         )),
                 ),
               ),
