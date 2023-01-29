@@ -164,7 +164,6 @@ class _MainState extends State<Main> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      Clipboard.setData(const ClipboardData());
                       HapticFeedback.mediumImpact();
                       late Duration diff;
                       try {
@@ -218,7 +217,6 @@ class _MainState extends State<Main> {
                       color: Colors.black,
                     ),
                     onPressed: () {
-                      Clipboard.setData(const ClipboardData());
                       HapticFeedback.mediumImpact();
                       pickImage();
                     },
@@ -346,19 +344,16 @@ class _MainState extends State<Main> {
   void animateFloatingButtons() async {
     floatingDeleteIconsOpacity = 0;
     floatingIconsOpacity = 1;
-    Clipboard.setData(const ClipboardData());
     HapticFeedback.lightImpact();
     floatingAddButtonPosition = floatingAddButtonPosition == 0 ? 90 : 0;
     floatingAddButtonOpacity = floatingAddButtonOpacity == 0 ? 1 : 0;
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 50));
-    Clipboard.setData(const ClipboardData());
     HapticFeedback.lightImpact();
     floatingSortButtonPosition = floatingSortButtonPosition == 0 ? 70 : 0;
     floatingSortButtonOpacity = floatingSortButtonOpacity == 0 ? 1 : 0;
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 50));
-    Clipboard.setData(const ClipboardData());
     HapticFeedback.lightImpact();
     floatingDeleteButtonPosition = floatingDeleteButtonPosition == 0 ? 90 : 0;
     floatingDeleteButtonOpacity = floatingDeleteButtonOpacity == 0 ? 1 : 0;
@@ -454,7 +449,6 @@ class _MainState extends State<Main> {
                   ),
                   onPressed: () {
                     if (floatingDeleteIconsOpacity == 0) {
-                      Clipboard.setData(const ClipboardData());
                       HapticFeedback.mediumImpact();
                       showAddCounterSheet();
                     } else {
@@ -502,7 +496,6 @@ class _MainState extends State<Main> {
                   ),
                   onPressed: () {
                     if (counterObj.isNotEmpty) {
-                      Clipboard.setData(const ClipboardData());
                       HapticFeedback.mediumImpact();
                     }
                     if (floatingDeleteIconsOpacity == 0) {
@@ -538,7 +531,6 @@ class _MainState extends State<Main> {
                   icon: const Icon(Icons.delete),
                   onPressed: () {
                     if (counterObj.isNotEmpty) {
-                      Clipboard.setData(const ClipboardData());
                       HapticFeedback.mediumImpact();
                       animateDeleteButtons();
                     }
@@ -574,7 +566,6 @@ class _MainState extends State<Main> {
               ? ReorderableListView(
                   padding: const EdgeInsets.only(top: 50, bottom: 100),
                   onReorder: (oldIndex, newIndex) {
-                    Clipboard.setData(const ClipboardData());
                     HapticFeedback.mediumImpact();
                     if (newIndex > oldIndex) {
                       newIndex--;
@@ -909,7 +900,6 @@ class _CounterCardState extends State<CounterCard> {
                     color: Colors.white54,
                   ),
                   onPressed: () async {
-                    Clipboard.setData(const ClipboardData());
                     HapticFeedback.mediumImpact();
                     animateCardHeight();
                     animateOptionsOpacity();
@@ -950,7 +940,6 @@ class _CounterCardState extends State<CounterCard> {
                               backgroundColor: Colors.black26,
                               shadowColor: Colors.transparent),
                           onPressed: (() {
-                            Clipboard.setData(const ClipboardData());
                             HapticFeedback.mediumImpact();
                             animateConfirmDeleteHeight();
                             animateConfirmDeleteOpacity(0);
@@ -970,7 +959,6 @@ class _CounterCardState extends State<CounterCard> {
                               backgroundColor: Colors.white,
                               shadowColor: Colors.transparent),
                           onPressed: (() {
-                            Clipboard.setData(const ClipboardData());
                             HapticFeedback.mediumImpact();
                             widget.deleteCounter(rank);
                           }),
@@ -994,7 +982,6 @@ class _CounterCardState extends State<CounterCard> {
                         color: Colors.white,
                         onPressed: () {
                           if (optionsOpacity == 1) {
-                            Clipboard.setData(const ClipboardData());
                             HapticFeedback.mediumImpact();
                             pickImage().then((value) {
                               setState(() {
@@ -1042,7 +1029,6 @@ class _CounterCardState extends State<CounterCard> {
                         color: Colors.white,
                         onPressed: () {
                           if (optionsOpacity == 1 && deleteEnabled) {
-                            Clipboard.setData(const ClipboardData());
                             HapticFeedback.mediumImpact();
                             animateConfirmDeleteHeight();
                             animateConfirmDeleteOpacity(1);
