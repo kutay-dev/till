@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.vdev.till">
+    <uses-permission android:name="android.permission.VIBRATE" />
    <application
         android:label="till"
         android:name="${applicationName}"
