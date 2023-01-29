@@ -436,8 +436,8 @@ class _MainState extends State<Main> {
                       showAddCounterSheet();
                     } else {
                       deleteAllCounters();
-                      animateFloatingButtons();
                     }
+                    animateFloatingButtons();
                   },
                 ),
               ),
@@ -455,9 +455,9 @@ class _MainState extends State<Main> {
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.all(
+                decoration: BoxDecoration(
+                  color: counterObj.isEmpty ? Colors.black54 : Colors.black,
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
                 ),
@@ -500,9 +500,9 @@ class _MainState extends State<Main> {
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.all(
+                decoration: BoxDecoration(
+                  color: counterObj.isEmpty ? Colors.black54 : Colors.black,
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
                 ),
@@ -510,7 +510,9 @@ class _MainState extends State<Main> {
                   color: Colors.white,
                   icon: const Icon(Icons.delete),
                   onPressed: () {
-                    animateDeleteButtons();
+                    if (counterObj.isNotEmpty) {
+                      animateDeleteButtons();
+                    }
                   },
                 ),
               ),
