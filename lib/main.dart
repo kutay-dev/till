@@ -398,6 +398,7 @@ class _MainState extends State<Main> {
     ]);
     size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       floatingActionButton: Stack(
         children: [
           Positioned(
