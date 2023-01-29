@@ -159,7 +159,7 @@ class _MainState extends State<Main> {
                   width: 148,
                   height: 57.5,
                   decoration: BoxDecoration(
-                    color: Colors.black87,
+                    color: Colors.black,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: ElevatedButton(
@@ -215,7 +215,7 @@ class _MainState extends State<Main> {
                   child: IconButton(
                     icon: const Icon(
                       Icons.add_photo_alternate_outlined,
-                      color: Colors.black87,
+                      color: Colors.black,
                     ),
                     onPressed: () {
                       Clipboard.setData(const ClipboardData());
@@ -233,7 +233,7 @@ class _MainState extends State<Main> {
                     padding: const EdgeInsets.all(30),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.black87,
+                        color: Colors.black,
                         borderRadius: const BorderRadius.all(
                           Radius.circular(20),
                         ),
@@ -767,7 +767,7 @@ class _CounterCardState extends State<CounterCard> {
         height: cardHeight,
         child: Container(
           decoration: const BoxDecoration(
-            color: Colors.black87,
+            color: Colors.black,
             borderRadius: BorderRadius.all(
               Radius.circular(20),
             ),
@@ -966,7 +966,7 @@ class _CounterCardState extends State<CounterCard> {
                         height: 35,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black87,
+                              foregroundColor: Colors.black,
                               backgroundColor: Colors.white,
                               shadowColor: Colors.transparent),
                           onPressed: (() {
