@@ -332,16 +332,26 @@ class _MainState extends State<Main> {
     );
   }
 
-  double floatingButtonsPosition = 0;
+  double floatingAddButtonPosition = 0;
   double floatingSortButtonPosition = 0;
-  double floatingButtonsOpacity = 0;
+  double floatingDeleteButtonPosition = 0;
+  double floatingAddButtonOpacity = 0;
+  double floatingSortButtonOpacity = 0;
+  double floatingDeleteButtonOpacity = 0;
 
-  void animateFloatingButtons() {
+  void animateFloatingButtons() async {
     floatingDeleteIconsOpacity = 0;
     floatingIconsOpacity = 1;
-    floatingButtonsPosition = floatingButtonsPosition == 0 ? 90 : 0;
+    floatingAddButtonPosition = floatingAddButtonPosition == 0 ? 90 : 0;
+    floatingAddButtonOpacity = floatingAddButtonOpacity == 0 ? 1 : 0;
+    setState(() {});
+    await Future.delayed(const Duration(milliseconds: 30));
     floatingSortButtonPosition = floatingSortButtonPosition == 0 ? 70 : 0;
-    floatingButtonsOpacity = floatingButtonsOpacity == 0 ? 1 : 0;
+    floatingSortButtonOpacity = floatingSortButtonOpacity == 0 ? 1 : 0;
+    setState(() {});
+    await Future.delayed(const Duration(milliseconds: 30));
+    floatingDeleteButtonPosition = floatingDeleteButtonPosition == 0 ? 90 : 0;
+    floatingDeleteButtonOpacity = floatingDeleteButtonOpacity == 0 ? 1 : 0;
 
     setState(() {});
   }
@@ -399,13 +409,13 @@ class _MainState extends State<Main> {
           ),
           AnimatedPositioned(
             bottom: 0,
-            right: floatingButtonsPosition,
+            right: floatingAddButtonPosition,
             duration: const Duration(milliseconds: 150),
             curve: Curves.ease,
             child: AnimatedOpacity(
               curve: Curves.ease,
               duration: const Duration(milliseconds: 150),
-              opacity: floatingButtonsOpacity,
+              opacity: floatingAddButtonOpacity,
               child: Container(
                 width: 60,
                 height: 60,
@@ -451,7 +461,7 @@ class _MainState extends State<Main> {
             child: AnimatedOpacity(
               curve: Curves.ease,
               duration: const Duration(milliseconds: 150),
-              opacity: floatingButtonsOpacity,
+              opacity: floatingSortButtonOpacity,
               child: Container(
                 width: 60,
                 height: 60,
@@ -489,14 +499,14 @@ class _MainState extends State<Main> {
             ),
           ),
           AnimatedPositioned(
-            bottom: floatingButtonsPosition,
+            bottom: floatingDeleteButtonPosition,
             right: 0,
             duration: const Duration(milliseconds: 150),
             curve: Curves.ease,
             child: AnimatedOpacity(
               curve: Curves.ease,
               duration: const Duration(milliseconds: 150),
-              opacity: floatingButtonsOpacity,
+              opacity: floatingDeleteButtonOpacity,
               child: Container(
                 width: 60,
                 height: 60,
