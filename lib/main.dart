@@ -122,9 +122,9 @@ class _MainState extends State<Main> {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(40),
+          top: Radius.circular(window.viewPadding.top > 100 ? 40 : 0),
         ),
       ),
       builder: (BuildContext context) {
@@ -1222,7 +1222,9 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
       body: Stack(
         children: [
           ListView(
-            padding: const EdgeInsets.symmetric(vertical: 80),
+            padding: EdgeInsets.symmetric(
+              vertical: window.viewPadding.top > 100 ? 85 : 70,
+            ),
             children: [
               for (int i = 0; i < days.length; i++)
                 Padding(
@@ -1269,12 +1271,12 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
             sigmaX: 2,
             sigmaY: 2,
             child: Container(
-              height: 80,
+              height: window.viewPadding.top > 100 ? 85 : 70,
               color: Colors.black26,
             ),
           ),
           Positioned(
-            top: 30,
+            top: window.viewPadding.top > 100 ? 35 : 20,
             left: 15,
             child: IconButton(
               onPressed: () {
