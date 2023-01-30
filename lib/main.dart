@@ -818,7 +818,7 @@ class _CounterCardState extends State<CounterCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(30, 12, 30, 25),
+      padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
       child: AnimatedContainer(
         curve: Curves.ease,
         duration: const Duration(milliseconds: 150),
