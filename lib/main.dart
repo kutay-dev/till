@@ -44,6 +44,16 @@ late DateTime date;
 late String dateStr;
 final TextEditingController titleController = TextEditingController();
 
+final ScrollController counterListScrollController = ScrollController();
+
+void scrollToBottom() {
+  counterListScrollController.animateTo(
+    counterListScrollController.position.maxScrollExtent,
+    duration: const Duration(milliseconds: 500),
+    curve: Curves.ease,
+  );
+}
+
 class _MainState extends State<Main> {
   List counterCards = [];
 
@@ -87,7 +97,7 @@ class _MainState extends State<Main> {
     setState(() {});
   }
 
-  void addCounterCard() {
+  void addCounterCard() async {
     int id = Random().nextInt(1000000);
     DateTime now = DateTime.now();
     double left = date.difference(now).inSeconds.toDouble();
@@ -106,6 +116,8 @@ class _MainState extends State<Main> {
     selected = null;
     titleController.clear();
     setState(() {});
+    await Future.delayed(const Duration(milliseconds: 300));
+    scrollToBottom();
   }
 
   void sortCounters() {
@@ -630,6 +642,7 @@ class _MainState extends State<Main> {
         children: [
           (counterCards.isNotEmpty
               ? ReorderableListView(
+                  scrollController: counterListScrollController,
                   padding: const EdgeInsets.only(top: 50, bottom: 100),
                   onReorder: (oldIndex, newIndex) {
                     HapticFeedback.mediumImpact();
