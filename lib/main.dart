@@ -21,9 +21,10 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true, splashColor: Colors.white),
       debugShowCheckedModeBanner: false,
-      home: Main(),
+      home: const Main(),
     );
   }
 }
@@ -39,13 +40,12 @@ List counterObj = box.read("counterObj") ?? [];
 
 dynamic size;
 
+late DateTime date;
+late String dateStr;
+final TextEditingController titleController = TextEditingController();
+
 class _MainState extends State<Main> {
   List counterCards = [];
-
-  final TextEditingController titleController = TextEditingController();
-
-  late DateTime date;
-  late String dateStr;
 
   PickedFile? selected;
   ValueNotifier<String> selectedPath = ValueNotifier("");
@@ -153,74 +153,116 @@ class _MainState extends State<Main> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(bottom: 50),
                 alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: 148,
-                  height: 57.5,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      HapticFeedback.mediumImpact();
-                      late Duration diff;
-                      try {
-                        DateTime now = DateTime.now();
-                        dateStr = "$date";
-                        diff = now.difference(date);
-                      } catch (e) {
-                        Fluttertoast.showToast(
-                            msg: "Enter a valid time",
-                            toastLength: Toast.LENGTH_LONG,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 2,
-                            backgroundColor: Colors.red[300],
-                            textColor: Colors.white,
-                            fontSize: 18);
-                        return;
-                      }
-
-                      if (diff.isNegative) {
-                        Navigator.of(context).pop();
-                        addCounterCard();
-                        setState(() {});
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
+                padding: const EdgeInsets.only(bottom: 50),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      width: 57.5,
+                      height: 57.5,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          HapticFeedback.mediumImpact();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SpeacialDaysPage(
+                                  addCounterCard: addCounterCard),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            surfaceTintColor: Colors.black,
+                            foregroundColor: Colors.grey[400]),
+                        child: const Icon(
+                          Icons.star_border,
+                          color: Colors.black,
                         ),
                       ),
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
                     ),
-                    child: const Text(
-                      "Add Counter",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    SizedBox(
+                      width: 148,
+                      height: 57.5,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          HapticFeedback.mediumImpact();
+                          late Duration diff;
+                          try {
+                            DateTime now = DateTime.now();
+                            dateStr = "$date";
+                            diff = now.difference(date);
+                          } catch (e) {
+                            Fluttertoast.showToast(
+                                msg: "Enter a valid time",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 2,
+                                backgroundColor: Colors.red[300],
+                                textColor: Colors.white,
+                                fontSize: 18);
+                            return;
+                          }
+
+                          if (diff.isNegative) {
+                            Navigator.of(context).pop();
+                            addCounterCard();
+                            setState(() {});
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          backgroundColor: Colors.black,
+                          shadowColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text(
+                          "Add Counter",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 50,
-                right: size.width / 10,
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.add_photo_alternate_outlined,
-                      color: Colors.black,
+                    SizedBox(
+                      width: 57.5,
+                      height: 57.5,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          HapticFeedback.mediumImpact();
+                          pickImage();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          surfaceTintColor: Colors.black,
+                          foregroundColor: Colors.grey[400],
+                        ),
+                        child: const Icon(
+                          Icons.add_photo_alternate_outlined,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
-                    onPressed: () {
-                      HapticFeedback.mediumImpact();
-                      pickImage();
-                    },
-                  ),
+                  ],
                 ),
               ),
               Positioned(
@@ -1084,6 +1126,141 @@ class BlurFilter extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class SpeacialDaysPage extends StatefulWidget {
+  const SpeacialDaysPage({required this.addCounterCard, super.key});
+  final dynamic addCounterCard;
+
+  @override
+  State<SpeacialDaysPage> createState() => _SpeacialDaysPageState();
+}
+
+class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
+  final List days = [
+    {
+      "title": "New Year",
+      "date": "January 1",
+      "datetime": "2024-01-01 18:00:00.00",
+    },
+    {
+      "title": "Christmas Eve",
+      "date": "December 24",
+      "datetime": "2023-12-24 18:00:00.00",
+    },
+    {
+      "title": "Thanksgiving",
+      "date": "November 23",
+      "datetime": "2023-11-23 00:00:00.00",
+    },
+    {
+      "title": "Halloween",
+      "date": "October 31",
+      "datetime": "2023-10-31 00:00:00.00",
+    },
+    {
+      "title": "Mother's Day",
+      "date": "May 14",
+      "datetime": "2023-05-14 00:00:00.00",
+    },
+    {
+      "title": "Father's Day",
+      "date": "June 18",
+      "datetime": "2023-06-18 00:00:00.00",
+    },
+    {
+      "title": "Valentine's Day",
+      "date": "February 14",
+      "datetime": "2023-02-14 00:00:00.00",
+    },
+    {
+      "title": "Independence Day",
+      "date": "July 4",
+      "datetime": "2023-07-04 00:00:00.00",
+    },
+    {
+      "title": "Easter",
+      "date": "April 9",
+      "datetime": "2023-04-09 00:00:00.00",
+    },
+    {
+      "title": "Saint Patrick's Day",
+      "date": "March 17",
+      "datetime": "2023-03-17 00:00:00.00",
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          ListView(
+            padding: const EdgeInsets.symmetric(vertical: 80),
+            children: [
+              for (int i = 0; i < days.length; i++)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 20),
+                        title: Text(days[i]["title"]),
+                        subtitle: Text(
+                          days[i]["date"],
+                          style: const TextStyle(color: Colors.black45),
+                        ),
+                        trailing: IconButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            date = DateTime.parse(days[i]["datetime"]);
+                            dateStr = "$date";
+                            titleController.text = days[i]["title"];
+                            widget.addCounterCard();
+                            await Future.delayed(
+                                const Duration(milliseconds: 100));
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.add,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      i != days.length - 1
+                          ? const Divider(
+                              color: Colors.black12,
+                            )
+                          : const SizedBox(),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          BlurFilter(
+            radius: 0,
+            sigmaX: 2,
+            sigmaY: 2,
+            child: Container(
+              height: 80,
+              color: Colors.black26,
+            ),
+          ),
+          Positioned(
+            top: 30,
+            left: 15,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back_ios),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
