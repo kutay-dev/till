@@ -235,7 +235,7 @@ class _MainState extends State<Main> {
                               Radius.circular(10),
                             ),
                           ),
-                          backgroundColor: Colors.black,
+                          backgroundColor: Colors.grey[900],
                           shadowColor: Colors.transparent,
                           foregroundColor: Colors.white,
                         ),
@@ -479,17 +479,9 @@ class _MainState extends State<Main> {
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.black,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white,
-                      blurRadius: 0,
-                      spreadRadius: 1,
-                      offset: Offset(0, 0),
-                    )
-                  ],
-                  borderRadius: BorderRadius.all(
+                decoration: BoxDecoration(
+                  color: Colors.grey[900],
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
                 ),
@@ -535,15 +527,7 @@ class _MainState extends State<Main> {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: counterObj.isEmpty ? Colors.black54 : Colors.black,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.white,
-                      blurRadius: 0,
-                      spreadRadius: 1,
-                      offset: Offset(0, 0),
-                    )
-                  ],
+                  color: counterObj.isEmpty ? Colors.black54 : Colors.grey[900],
                   borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
@@ -591,15 +575,7 @@ class _MainState extends State<Main> {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: counterObj.isEmpty ? Colors.black54 : Colors.black,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.white,
-                      blurRadius: 0,
-                      spreadRadius: 1,
-                      offset: Offset(0, 0),
-                    )
-                  ],
+                  color: counterObj.isEmpty ? Colors.black54 : Colors.grey[900],
                   borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
