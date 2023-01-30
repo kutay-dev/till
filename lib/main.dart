@@ -992,9 +992,13 @@ class _CounterCardState extends State<CounterCard> {
                         height: 35,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.black26,
-                              shadowColor: Colors.transparent),
+                            foregroundColor: Colors.white54,
+                            backgroundColor: Colors.black26,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                          ),
                           onPressed: (() {
                             HapticFeedback.mediumImpact();
                             animateConfirmDeleteHeight();
@@ -1011,9 +1015,13 @@ class _CounterCardState extends State<CounterCard> {
                         height: 35,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor: Colors.white,
-                              shadowColor: Colors.transparent),
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                          ),
                           onPressed: (() {
                             HapticFeedback.mediumImpact();
                             widget.deleteCounter(rank);
