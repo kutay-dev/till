@@ -469,6 +469,14 @@ class _MainState extends State<Main> {
                 height: 60,
                 decoration: const BoxDecoration(
                   color: Colors.black,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white,
+                      blurRadius: 0,
+                      spreadRadius: 1,
+                      offset: Offset(0, 0),
+                    )
+                  ],
                   borderRadius: BorderRadius.all(
                     Radius.circular(100),
                   ),
@@ -516,6 +524,14 @@ class _MainState extends State<Main> {
                 height: 60,
                 decoration: BoxDecoration(
                   color: counterObj.isEmpty ? Colors.black54 : Colors.black,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.white,
+                      blurRadius: 0,
+                      spreadRadius: 1,
+                      offset: Offset(0, 0),
+                    )
+                  ],
                   borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
@@ -564,6 +580,14 @@ class _MainState extends State<Main> {
                 height: 60,
                 decoration: BoxDecoration(
                   color: counterObj.isEmpty ? Colors.black54 : Colors.black,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.white,
+                      blurRadius: 0,
+                      spreadRadius: 1,
+                      offset: Offset(0, 0),
+                    )
+                  ],
                   borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
