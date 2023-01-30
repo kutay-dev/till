@@ -642,6 +642,7 @@ class _MainState extends State<Main> {
         children: [
           (counterCards.isNotEmpty
               ? ReorderableListView(
+                  buildDefaultDragHandles: false,
                   scrollController: counterListScrollController,
                   padding: const EdgeInsets.only(top: 50, bottom: 100),
                   onReorder: (oldIndex, newIndex) {
@@ -1121,6 +1122,17 @@ class _CounterCardState extends State<CounterCard> {
                       ),
                     ),
                   ],
+                ),
+              ),
+              SizedBox(
+                width: 35,
+                height: 35,
+                child: ReorderableDragStartListener(
+                  index: rank,
+                  child: const Icon(
+                    Icons.drag_handle,
+                    color: Colors.white30,
+                  ),
                 ),
               ),
             ],
