@@ -358,7 +358,7 @@ class _MainState extends State<Main> {
                               child: TextField(
                                 controller: titleController,
                                 autofocus: true,
-                                maxLength: 12,
+                                maxLength: 15,
                                 textCapitalization:
                                     TextCapitalization.characters,
                                 decoration: const InputDecoration(
@@ -1079,7 +1079,7 @@ class _CounterCardState extends State<CounterCard> {
                       right: 85,
                       child: TextField(
                         enabled: showOptions,
-                        maxLength: 12,
+                        maxLength: 15,
                         textCapitalization: TextCapitalization.characters,
                         decoration: InputDecoration(
                           hintText: widget.title == "" ? "TITLE" : "",
