@@ -1219,14 +1219,9 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
       "datetime": "2023-06-18 00:00:00.00",
     },
     {
-      "title": "Valentine's Day",
+      "title": "Valentine's day",
       "date": "February 14",
       "datetime": "2023-02-14 00:00:00.00",
-    },
-    {
-      "title": "Independence Day",
-      "date": "July 4",
-      "datetime": "2023-07-04 00:00:00.00",
     },
     {
       "title": "Easter",
@@ -1234,7 +1229,7 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
       "datetime": "2023-04-09 00:00:00.00",
     },
     {
-      "title": "Saint Patrick's Day",
+      "title": "Saint Patrick's",
       "date": "March 17",
       "datetime": "2023-03-17 00:00:00.00",
     },
@@ -1268,13 +1263,14 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
                           width: 50,
                           child: ElevatedButton(
                             onPressed: () async {
+                              HapticFeedback.mediumImpact();
                               Navigator.pop(context);
                               date = DateTime.parse(days[i]["datetime"]);
                               dateStr = "$date";
                               titleController.text = days[i]["title"];
                               widget.addCounterCard();
                               await Future.delayed(
-                                  const Duration(milliseconds: 100));
+                                  const Duration(milliseconds: 300));
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
