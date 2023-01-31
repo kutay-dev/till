@@ -1257,20 +1257,37 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
                           days[i]["date"],
                           style: const TextStyle(color: Colors.black45),
                         ),
-                        trailing: IconButton(
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            date = DateTime.parse(days[i]["datetime"]);
-                            dateStr = "$date";
-                            titleController.text = days[i]["title"];
-                            widget.addCounterCard();
-                            await Future.delayed(
-                                const Duration(milliseconds: 100));
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(
-                            Icons.add,
-                            color: Colors.black87,
+                        trailing: SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              date = DateTime.parse(days[i]["datetime"]);
+                              dateStr = "$date";
+                              titleController.text = days[i]["title"];
+                              widget.addCounterCard();
+                              await Future.delayed(
+                                  const Duration(milliseconds: 100));
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.all(0), // to center child
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+
+                              shadowColor: Colors.transparent,
+                              surfaceTintColor: Colors.transparent,
+                              foregroundColor: Colors.transparent,
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.black87,
+                            ),
                           ),
                         ),
                       ),
