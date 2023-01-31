@@ -235,7 +235,7 @@ class _MainState extends State<Main> {
                               Radius.circular(10),
                             ),
                           ),
-                          backgroundColor: Colors.grey[900],
+                          backgroundColor: Colors.black,
                           shadowColor: Colors.transparent,
                           foregroundColor: Colors.white,
                         ),
@@ -271,6 +271,7 @@ class _MainState extends State<Main> {
                         child: const Icon(
                           Icons.add_photo_alternate_outlined,
                           color: Colors.black,
+                          size: 20,
                         ),
                       ),
                     ),
@@ -479,9 +480,9 @@ class _MainState extends State<Main> {
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.grey[900],
-                  borderRadius: const BorderRadius.all(
+                decoration: const BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.all(
                     Radius.circular(100),
                   ),
                 ),
@@ -527,7 +528,7 @@ class _MainState extends State<Main> {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: counterObj.isEmpty ? Colors.black54 : Colors.grey[900],
+                  color: counterObj.isEmpty ? Colors.black54 : Colors.black,
                   borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
@@ -575,7 +576,7 @@ class _MainState extends State<Main> {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: counterObj.isEmpty ? Colors.black54 : Colors.grey[900],
+                  color: counterObj.isEmpty ? Colors.black54 : Colors.black,
                   borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
@@ -620,7 +621,7 @@ class _MainState extends State<Main> {
               ? ReorderableListView(
                   buildDefaultDragHandles: false,
                   scrollController: counterListScrollController,
-                  padding: const EdgeInsets.only(top: 50, bottom: 100),
+                  padding: const EdgeInsets.only(top: 50, bottom: 200),
                   onReorder: (oldIndex, newIndex) {
                     HapticFeedback.mediumImpact();
                     if (newIndex > oldIndex) {
