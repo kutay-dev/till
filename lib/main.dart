@@ -117,6 +117,7 @@ class _MainState extends State<Main> {
     titleController.clear();
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 300));
+    animateFloatingButtons();
     scrollToBottom();
   }
 
@@ -396,20 +397,25 @@ class _MainState extends State<Main> {
   double floatingSortButtonOpacity = 0;
   double floatingDeleteButtonOpacity = 0;
 
+  void impactFloatingButtonsSynchronously() async {
+    HapticFeedback.lightImpact();
+    await Future.delayed(const Duration(milliseconds: 50));
+    HapticFeedback.lightImpact();
+    await Future.delayed(const Duration(milliseconds: 50));
+    HapticFeedback.lightImpact();
+  }
+
   void animateFloatingButtons() async {
     floatingDeleteIconsOpacity = 0;
     floatingIconsOpacity = 1;
-    HapticFeedback.lightImpact();
     floatingAddButtonPosition = floatingAddButtonPosition == 0 ? 90 : 0;
     floatingAddButtonOpacity = floatingAddButtonOpacity == 0 ? 1 : 0;
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 50));
-    HapticFeedback.lightImpact();
     floatingSortButtonPosition = floatingSortButtonPosition == 0 ? 70 : 0;
     floatingSortButtonOpacity = floatingSortButtonOpacity == 0 ? 1 : 0;
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 50));
-    HapticFeedback.lightImpact();
     floatingDeleteButtonPosition = floatingDeleteButtonPosition == 0 ? 90 : 0;
     floatingDeleteButtonOpacity = floatingDeleteButtonOpacity == 0 ? 1 : 0;
 
@@ -509,6 +515,7 @@ class _MainState extends State<Main> {
                     } else {
                       deleteAllCounters();
                       animateFloatingButtons();
+                      impactFloatingButtonsSynchronously();
                     }
                   },
                 ),
@@ -605,6 +612,7 @@ class _MainState extends State<Main> {
                 splashRadius: 30,
                 onPressed: () {
                   animateFloatingButtons();
+                  impactFloatingButtonsSynchronously();
                 },
                 icon: const Icon(
                   Icons.more_horiz,
