@@ -54,6 +54,11 @@ void scrollToBottom() {
   );
 }
 
+void scrollToBottomAsync() async {
+  await Future.delayed(const Duration(milliseconds: 500));
+  scrollToBottom();
+}
+
 class _MainState extends State<Main> {
   List counterCards = [];
 
@@ -70,6 +75,7 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     getCounterCards();
+    scrollToBottomAsync();
     super.initState();
   }
 
