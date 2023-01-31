@@ -271,7 +271,7 @@ class _MainState extends State<Main> {
                         child: const Icon(
                           Icons.add_photo_alternate_outlined,
                           color: Colors.black,
-                          size: 20,
+                          size: 22,
                         ),
                       ),
                     ),
@@ -1177,7 +1177,7 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
     {
       "title": "New Year",
       "date": "January 1",
-      "datetime": "2024-01-01 18:00:00.00",
+      "datetime": "2024-01-01 00:00:00.00",
     },
     {
       "title": "Christmas Eve",
