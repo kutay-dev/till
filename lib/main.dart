@@ -147,6 +147,7 @@ class _MainState extends State<Main> {
 
   void showAddCounterSheet() {
     showModalBottomSheet(
+      backgroundColor: Colors.white,
       isScrollControlled: true,
       context: context,
       shape: RoundedRectangleBorder(
