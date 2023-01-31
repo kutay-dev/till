@@ -1276,14 +1276,9 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
                 ),
             ],
           ),
-          BlurFilter(
-            radius: 0,
-            sigmaX: 2,
-            sigmaY: 2,
-            child: Container(
-              height: window.viewPadding.top > 100 ? 85 : 70,
-              color: Colors.black26,
-            ),
+          Container(
+            height: window.viewPadding.top > 100 ? 85 : 70,
+            color: Colors.black,
           ),
           Positioned(
             top: window.viewPadding.top > 100 ? 35 : 20,
@@ -1292,7 +1287,10 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(Icons.arrow_back_ios),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
