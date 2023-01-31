@@ -22,7 +22,15 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(useMaterial3: true, splashColor: Colors.white),
+      theme: ThemeData(
+        useMaterial3: true,
+        splashColor: Colors.white,
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Colors.white,
+          selectionColor: Colors.white30,
+          selectionHandleColor: Colors.white30,
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       home: const Main(),
     );
