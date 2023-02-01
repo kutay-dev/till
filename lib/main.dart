@@ -8,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   await GetStorage.init();
@@ -491,113 +492,154 @@ class _MainState extends State<Main> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+              top: 100,
+              child: Column(
                 children: [
-                  const Text("Use 24 hour format"),
-                  Switch(
-                    activeTrackColor: Colors.black,
-                    inactiveThumbColor: Colors.black,
-                    inactiveTrackColor: Colors.black12,
-                    activeColor: Colors.white,
-                    value: set24HourFormat,
-                    onChanged: (value) {
-                      hapticFeedback();
-                      set24HourFormat = value;
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text("Use 24 hour format"),
+                      Switch(
+                        activeTrackColor: Colors.black,
+                        inactiveThumbColor: Colors.black,
+                        inactiveTrackColor: Colors.black12,
+                        activeColor: Colors.white,
+                        value: set24HourFormat,
+                        onChanged: (value) {
+                          hapticFeedback();
+                          set24HourFormat = value;
+                          setState(() {});
+                          box.write("set24HourFormat", set24HourFormat);
+                        },
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text("Use haptic feedback"),
+                      Switch(
+                        activeTrackColor: Colors.black,
+                        inactiveThumbColor: Colors.black,
+                        inactiveTrackColor: Colors.black12,
+                        activeColor: Colors.white,
+                        value: setHaptic,
+                        onChanged: (value) {
+                          hapticFeedback();
+                          setHaptic = value;
+                          setState(() {});
+                          box.write("setHaptic", setHaptic);
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 50),
+                  ElevatedButton(
+                    onPressed: () {
+                      confirmDeleteButtonsOpacity =
+                          confirmDeleteButtonsOpacity == 0 ? 1 : 0;
                       setState(() {});
-                      box.write("set24HourFormat", set24HourFormat);
                     },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.redAccent,
+                      surfaceTintColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text("Delete all counters"),
+                  ),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: confirmDeleteButtonsOpacity,
+                    child: SizedBox(
+                      width: 300,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              confirmDeleteButtonsOpacity = 0;
+                              setState(() {});
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              surfaceTintColor: Colors.transparent,
+                              backgroundColor: Colors.black12,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text("No"),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (confirmDeleteButtonsOpacity == 1) {
+                                deleteAllCounters();
+                                Navigator.pop(context);
+                                impactFloatingButtonsSynchronously();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              surfaceTintColor: Colors.transparent,
+                              backgroundColor: Colors.black12,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text("Yes"),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            ),
+            Positioned(
+              bottom: 20,
+              child: Column(
                 children: [
-                  const Text("Use haptic feedback"),
-                  Switch(
-                    activeTrackColor: Colors.black,
-                    inactiveThumbColor: Colors.black,
-                    inactiveTrackColor: Colors.black12,
-                    activeColor: Colors.white,
-                    value: setHaptic,
-                    onChanged: (value) {
-                      hapticFeedback();
-                      setHaptic = value;
-                      setState(() {});
-                      box.write("setHaptic", setHaptic);
+                  TextButton(
+                    onPressed: () async {
+                      if (!await launchUrl(Uri.parse(
+                          'https://play.google.com/store/apps/dev?id=4755389231975300206'))) {
+                        throw Exception('Could not launch the page');
+                      }
                     },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.black45,
+                      splashFactory: NoSplash.splashFactory,
+                    ),
+                    child: const Text("Store Page"),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      if (!await launchUrl(Uri.parse(
+                          'https://www.freeprivacypolicy.com/live/8da82b2b-adb1-4f39-88a0-5fb85f49634a'))) {
+                        throw Exception('Could not launch the page');
+                      }
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.black45,
+                      splashFactory: NoSplash.splashFactory,
+                    ),
+                    child: const Text("Privacy Policy"),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  confirmDeleteButtonsOpacity =
-                      confirmDeleteButtonsOpacity == 0 ? 1 : 0;
-                  setState(() {});
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.redAccent,
-                  surfaceTintColor: Colors.transparent,
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  splashFactory: NoSplash.splashFactory,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text("Delete all counters"),
-              ),
-              AnimatedOpacity(
-                duration: Duration(milliseconds: 200),
-                opacity: confirmDeleteButtonsOpacity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        confirmDeleteButtonsOpacity = 0;
-                        setState(() {});
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        surfaceTintColor: Colors.transparent,
-                        backgroundColor: Colors.black12,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const Text("No"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (confirmDeleteButtonsOpacity == 1) {
-                          deleteAllCounters();
-                          Navigator.pop(context);
-                          impactFloatingButtonsSynchronously();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        surfaceTintColor: Colors.transparent,
-                        backgroundColor: Colors.black12,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const Text("Yes"),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
       floatingActionButton: Stack(
