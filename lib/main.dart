@@ -60,6 +60,8 @@ bool setHaptic = box.read("set24HourFormat") ?? true;
 
 double confirmDeleteButtonsOpacity = 0;
 
+double secsOpacity = 1;
+
 void hapticFeedback([String impact = "medium"]) {
   if (setHaptic) {
     if (impact == "medium") {
@@ -952,9 +954,15 @@ class _CounterCardState extends State<CounterCard> {
         minsLeft = minsLeft.floor();
         left -= minsLeft * 60;
 
-        await Future.delayed(const Duration(seconds: 1));
+        await Future.delayed(const Duration(milliseconds: 900));
+        secsOpacity = 0;
 
+        setState(() {});
+        await Future.delayed(const Duration(milliseconds: 100));
         left -= 1;
+        setState(() {});
+        secsOpacity = 1;
+        setState(() {});
         box.write("counterObj", counterObj);
       }
       setState(() {});
@@ -1119,12 +1127,28 @@ class _CounterCardState extends State<CounterCard> {
                                               fontWeight: FontWeight.bold,
                                               fontSize: 13.5),
                                         ),
-                                        Text(
-                                          "S: ${left.toStringAsFixed(0)}",
-                                          style: const TextStyle(
-                                              color: Colors.white54,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13.5),
+                                        Row(
+                                          children: [
+                                            const Text(
+                                              "S: ",
+                                              style: TextStyle(
+                                                  color: Colors.white54,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 13.5),
+                                            ),
+                                            AnimatedOpacity(
+                                              opacity: secsOpacity,
+                                              duration: const Duration(
+                                                  milliseconds: 100),
+                                              child: Text(
+                                                left.toStringAsFixed(0),
+                                                style: const TextStyle(
+                                                    color: Colors.white54,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13.5),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -1207,7 +1231,7 @@ class _CounterCardState extends State<CounterCard> {
                             deleteEnabled = true;
                             setState(() {});
                           }),
-                          child: const Text("no "),
+                          child: const Text("no"),
                         ),
                       ),
                       Container(
@@ -1227,7 +1251,7 @@ class _CounterCardState extends State<CounterCard> {
                             hapticFeedback();
                             widget.deleteCounter(rank);
                           }),
-                          child: const Text("yes "),
+                          child: const Text("yes"),
                         ),
                       ),
                     ],
