@@ -54,6 +54,22 @@ final TextEditingController titleController = TextEditingController();
 
 final ScrollController counterListScrollController = ScrollController();
 
+bool set24HourFormat = box.read("set24HourFormat") ?? false;
+bool setHaptic = box.read("set24HourFormat") ?? true;
+
+double confirmDeleteButtonsOpacity = 0;
+
+void hapticFeedback([String impact = "medium"]) {
+  if (setHaptic) {
+    if (impact == "medium") {
+      HapticFeedback.mediumImpact();
+    }
+    if (impact == "light") {
+      HapticFeedback.lightImpact();
+    }
+  }
+}
+
 void scrollToBottom() {
   counterListScrollController.animateTo(
     counterListScrollController.position.maxScrollExtent,
@@ -172,6 +188,7 @@ class _MainState extends State<Main> {
                     height: size.height / 1.2,
                     width: size.width,
                     child: CupertinoDatePicker(
+                      use24hFormat: set24HourFormat,
                       initialDateTime: DateTime.now(),
                       onDateTimeChanged: (value) {
                         date = value;
@@ -191,7 +208,7 @@ class _MainState extends State<Main> {
                       height: 57.5,
                       child: ElevatedButton(
                         onPressed: () {
-                          HapticFeedback.mediumImpact();
+                          hapticFeedback();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -221,7 +238,7 @@ class _MainState extends State<Main> {
                       height: 57.5,
                       child: ElevatedButton(
                         onPressed: () {
-                          HapticFeedback.mediumImpact();
+                          hapticFeedback();
                           late Duration diff;
                           try {
                             DateTime now = DateTime.now();
@@ -270,7 +287,7 @@ class _MainState extends State<Main> {
                       height: 57.5,
                       child: ElevatedButton(
                         onPressed: () {
-                          HapticFeedback.mediumImpact();
+                          hapticFeedback();
                           pickImage();
                         },
                         style: ElevatedButton.styleFrom(
@@ -413,11 +430,11 @@ class _MainState extends State<Main> {
   double floatingDeleteButtonOpacity = 0;
 
   void impactFloatingButtonsSynchronously() async {
-    HapticFeedback.lightImpact();
+    hapticFeedback("light");
     await Future.delayed(const Duration(milliseconds: 50));
-    HapticFeedback.lightImpact();
+    hapticFeedback("light");
     await Future.delayed(const Duration(milliseconds: 50));
-    HapticFeedback.lightImpact();
+    hapticFeedback("light");
   }
 
   void animateFloatingButtons() async {
@@ -470,6 +487,119 @@ class _MainState extends State<Main> {
     size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      drawer: Drawer(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text("Use 24 hour format"),
+                  Switch(
+                    activeTrackColor: Colors.black,
+                    inactiveThumbColor: Colors.black,
+                    inactiveTrackColor: Colors.black12,
+                    activeColor: Colors.white,
+                    value: set24HourFormat,
+                    onChanged: (value) {
+                      hapticFeedback();
+                      set24HourFormat = value;
+                      setState(() {});
+                      box.write("set24HourFormat", set24HourFormat);
+                    },
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text("Use haptic feedback"),
+                  Switch(
+                    activeTrackColor: Colors.black,
+                    inactiveThumbColor: Colors.black,
+                    inactiveTrackColor: Colors.black12,
+                    activeColor: Colors.white,
+                    value: setHaptic,
+                    onChanged: (value) {
+                      hapticFeedback();
+                      setHaptic = value;
+                      setState(() {});
+                      box.write("setHaptic", setHaptic);
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  confirmDeleteButtonsOpacity =
+                      confirmDeleteButtonsOpacity == 0 ? 1 : 0;
+                  setState(() {});
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  surfaceTintColor: Colors.transparent,
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text("Delete all counters"),
+              ),
+              AnimatedOpacity(
+                duration: Duration(milliseconds: 200),
+                opacity: confirmDeleteButtonsOpacity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        confirmDeleteButtonsOpacity = 0;
+                        setState(() {});
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        surfaceTintColor: Colors.transparent,
+                        backgroundColor: Colors.black12,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text("No"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (confirmDeleteButtonsOpacity == 1) {
+                          deleteAllCounters();
+                          Navigator.pop(context);
+                          impactFloatingButtonsSynchronously();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        surfaceTintColor: Colors.transparent,
+                        backgroundColor: Colors.black12,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text("Yes"),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
       floatingActionButton: Stack(
         children: [
           Positioned(
@@ -525,7 +655,7 @@ class _MainState extends State<Main> {
                   ),
                   onPressed: () {
                     if (floatingDeleteIconsOpacity == 0) {
-                      HapticFeedback.mediumImpact();
+                      hapticFeedback();
                       showAddCounterSheet();
                     } else {
                       deleteAllCounters();
@@ -550,7 +680,7 @@ class _MainState extends State<Main> {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: counterObj.isEmpty ? Colors.black54 : Colors.black,
+                  color: counterObj.length > 1 ? Colors.black : Colors.black54,
                   borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
@@ -572,8 +702,8 @@ class _MainState extends State<Main> {
                     ],
                   ),
                   onPressed: () {
-                    if (counterObj.isNotEmpty) {
-                      HapticFeedback.mediumImpact();
+                    if (counterObj.length > 1) {
+                      hapticFeedback();
                     }
                     if (floatingDeleteIconsOpacity == 0) {
                       sortCounters();
@@ -597,22 +727,22 @@ class _MainState extends State<Main> {
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(
-                  color: counterObj.isEmpty ? Colors.black54 : Colors.black,
-                  borderRadius: const BorderRadius.all(
+                decoration: const BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.all(
                     Radius.circular(100),
                   ),
                 ),
-                child: IconButton(
-                  color: Colors.white,
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    if (counterObj.isNotEmpty) {
-                      HapticFeedback.mediumImpact();
-                      animateDeleteButtons();
-                    }
-                  },
-                ),
+                child: Builder(builder: (context) {
+                  return IconButton(
+                    color: Colors.white,
+                    icon: const Icon(Icons.settings),
+                    onPressed: () {
+                      hapticFeedback();
+                      Scaffold.of(context).openDrawer();
+                    },
+                  );
+                }),
               ),
             ),
           ),
@@ -646,7 +776,7 @@ class _MainState extends State<Main> {
                   scrollController: counterListScrollController,
                   padding: const EdgeInsets.only(top: 50, bottom: 200),
                   onReorder: (oldIndex, newIndex) {
-                    HapticFeedback.mediumImpact();
+                    hapticFeedback();
                     if (newIndex > oldIndex) {
                       newIndex--;
                     }
@@ -980,7 +1110,7 @@ class _CounterCardState extends State<CounterCard> {
                     color: Colors.white54,
                   ),
                   onPressed: () async {
-                    HapticFeedback.mediumImpact();
+                    hapticFeedback();
                     animateCardHeight();
                     animateOptionsOpacity();
                     if (showOptions) {
@@ -1024,7 +1154,7 @@ class _CounterCardState extends State<CounterCard> {
                             ),
                           ),
                           onPressed: (() {
-                            HapticFeedback.mediumImpact();
+                            hapticFeedback();
                             animateConfirmDeleteHeight();
                             animateConfirmDeleteOpacity(0);
                             deleteEnabled = true;
@@ -1047,7 +1177,7 @@ class _CounterCardState extends State<CounterCard> {
                             ),
                           ),
                           onPressed: (() {
-                            HapticFeedback.mediumImpact();
+                            hapticFeedback();
                             widget.deleteCounter(rank);
                           }),
                           child: const Text("yes "),
@@ -1070,7 +1200,7 @@ class _CounterCardState extends State<CounterCard> {
                         color: Colors.white,
                         onPressed: () {
                           if (optionsOpacity == 1) {
-                            HapticFeedback.mediumImpact();
+                            hapticFeedback();
                             pickImage().then((value) {
                               setState(() {
                                 widget.image = selected!.path;
@@ -1117,7 +1247,7 @@ class _CounterCardState extends State<CounterCard> {
                         color: Colors.white,
                         onPressed: () {
                           if (optionsOpacity == 1 && deleteEnabled) {
-                            HapticFeedback.mediumImpact();
+                            hapticFeedback();
                             animateConfirmDeleteHeight();
                             animateConfirmDeleteOpacity(1);
                             if (confirmDeleteOpacity == 1) {
@@ -1272,7 +1402,7 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
                           width: 50,
                           child: ElevatedButton(
                             onPressed: () async {
-                              HapticFeedback.mediumImpact();
+                              hapticFeedback();
                               Navigator.pop(context);
                               date = DateTime.parse(days[i]["datetime"]);
                               dateStr = "$date";
