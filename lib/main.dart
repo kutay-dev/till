@@ -1053,7 +1053,9 @@ class _CounterCardState extends State<CounterCard> {
                           color: Colors.white,
                         )
                       : Text(
-                          "${(100 + perc).toStringAsFixed(0)}%",
+                          (100 + perc).toStringAsFixed(0) == "100"
+                              ? "99%"
+                              : "${(100 + perc).toStringAsFixed(0)}%",
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
