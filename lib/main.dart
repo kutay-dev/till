@@ -489,8 +489,11 @@ class _MainState extends State<Main> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       drawer: Drawer(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(25),
+            bottomRight: Radius.circular(25),
+          ),
         ),
         child: Stack(
           alignment: Alignment.center,
