@@ -611,7 +611,7 @@ class _MainState extends State<Main> {
               sigmaY: 10,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black12,
+                  color: Colors.black26,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 width: 60,
