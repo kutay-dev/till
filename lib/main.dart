@@ -495,8 +495,8 @@ class _MainState extends State<Main> {
       drawer: Drawer(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topRight: Radius.circular(25),
-            bottomRight: Radius.circular(25),
+            topRight: Radius.circular(30),
+            bottomRight: Radius.circular(30),
           ),
         ),
         child: Stack(
@@ -1342,7 +1342,7 @@ class _CounterCardState extends State<CounterCard> {
                   index: rank,
                   child: const Icon(
                     Icons.drag_handle,
-                    color: Colors.white30,
+                    color: Colors.white24,
                   ),
                 ),
               ),
