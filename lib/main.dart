@@ -541,7 +541,7 @@ class _MainState extends State<Main> {
                   setState(() {});
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
+                  foregroundColor: Colors.redAccent,
                   surfaceTintColor: Colors.transparent,
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
