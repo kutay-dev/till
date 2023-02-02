@@ -576,6 +576,7 @@ class _MainState extends State<Main> {
                   const SizedBox(height: 50),
                   ElevatedButton(
                     onPressed: () {
+                      hapticFeedback();
                       confirmDeleteButtonsOpacity =
                           confirmDeleteButtonsOpacity == 0 ? 1 : 0;
                       setState(() {});
@@ -602,8 +603,11 @@ class _MainState extends State<Main> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              confirmDeleteButtonsOpacity = 0;
-                              setState(() {});
+                              if (confirmDeleteButtonsOpacity == 1) {
+                                hapticFeedback();
+                                confirmDeleteButtonsOpacity = 0;
+                                setState(() {});
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.black,
@@ -619,6 +623,7 @@ class _MainState extends State<Main> {
                           ElevatedButton(
                             onPressed: () {
                               if (confirmDeleteButtonsOpacity == 1) {
+                                hapticFeedback();
                                 deleteAllCounters();
                                 Navigator.pop(context);
                                 impactFloatingButtonsSynchronously();
