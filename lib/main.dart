@@ -11,6 +11,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 void main() async {
   await GetStorage.init();
@@ -92,13 +93,37 @@ class _MainState extends State<Main> {
   List counterCards = [];
 
   PickedFile? selected;
-  ValueNotifier<String> selectedPath = ValueNotifier("");
+  CroppedFile? croppedSelected;
+
+  ValueNotifier<String> croppedSelectedPath = ValueNotifier("");
 
   bool reverseCounters = false;
 
   Future<void> pickImage() async {
     selected = await ImagePicker().getImage(source: ImageSource.gallery);
-    selectedPath.value = selected!.path;
+  }
+
+  void cropImage() async {
+    croppedSelected = await ImageCropper().cropImage(
+      sourcePath: selected!.path,
+      aspectRatio: const CropAspectRatio(ratioX: 10, ratioY: 3.5),
+      aspectRatioPresets: [
+        CropAspectRatioPreset.original,
+      ],
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: 'Cropper',
+        ),
+      ],
+    );
+    croppedSelectedPath.value = croppedSelected!.path;
+    setState(() {});
   }
 
   @override
@@ -143,12 +168,13 @@ class _MainState extends State<Main> {
       "left": left,
       "date": dateStr,
       "done": false,
-      "image": selected != null ? selected!.path : "null",
+      "image": croppedSelected != null ? croppedSelected!.path : "null",
     });
 
     box.write("counterObj", counterObj);
     getCounterCards();
     selected = null;
+    croppedSelected = null;
     titleController.clear();
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 300));
@@ -293,7 +319,9 @@ class _MainState extends State<Main> {
                       child: ElevatedButton(
                         onPressed: () {
                           hapticFeedback();
-                          pickImage();
+                          pickImage().then((value) {
+                            cropImage();
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           shape: const RoundedRectangleBorder(
@@ -345,11 +373,12 @@ class _MainState extends State<Main> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: ValueListenableBuilder(
-                                valueListenable: selectedPath,
+                                valueListenable: croppedSelectedPath,
                                 builder: (context, value, child) {
-                                  return selected != null
+                                  return croppedSelected != null
                                       ? SizedBox(
                                           width: double.infinity,
+                                          height: double.infinity,
                                           child: Image.file(
                                             File(value),
                                             fit: BoxFit.cover,
@@ -921,6 +950,33 @@ class _CounterCardState extends State<CounterCard> {
     selected = await ImagePicker().getImage(source: ImageSource.gallery);
   }
 
+  CroppedFile? croppedSelected;
+
+  void cropImage() async {
+    croppedSelected = await ImageCropper().cropImage(
+      sourcePath: selected!.path,
+      aspectRatio: const CropAspectRatio(ratioX: 10, ratioY: 3.5),
+      aspectRatioPresets: [
+        CropAspectRatioPreset.original,
+      ],
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.black,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: 'Cropper',
+        ),
+      ],
+    );
+
+    widget.image = croppedSelected!.path;
+
+    setState(() {});
+  }
+
   @override
   void setState(_) {
     if (mounted) {
@@ -1035,6 +1091,7 @@ class _CounterCardState extends State<CounterCard> {
                   : BlurFilter(
                       child: SizedBox(
                         width: double.infinity,
+                        height: double.infinity,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: Image.file(
@@ -1189,7 +1246,7 @@ class _CounterCardState extends State<CounterCard> {
                     if (showOptions) {
                       counterObj[rank]["title"] = titleController.text;
                       selected != null
-                          ? counterObj[rank]["image"] = selected!.path
+                          ? counterObj[rank]["image"] = croppedSelected!.path
                           : null;
                       box.write("counterObj", counterObj);
                       await Future.delayed(const Duration(milliseconds: 150));
@@ -1271,13 +1328,12 @@ class _CounterCardState extends State<CounterCard> {
                       right: 0,
                       child: IconButton(
                         color: Colors.white,
-                        onPressed: () {
+                        onPressed: () async {
                           if (optionsOpacity == 1) {
                             hapticFeedback();
                             pickImage().then((value) {
-                              setState(() {
-                                widget.image = selected!.path;
-                              });
+                              cropImage();
+                              setState(() {});
                             });
                           }
                         },
