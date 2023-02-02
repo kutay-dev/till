@@ -58,8 +58,8 @@ final TextEditingController titleController = TextEditingController();
 
 final ScrollController counterListScrollController = ScrollController();
 
-bool set24HourFormat = box.read("set24HourFormat") ?? false;
-bool setHaptic = box.read("set24HourFormat") ?? true;
+bool set24HourFormat = box.read("set24HourFormat") ?? true;
+bool setHaptic = box.read("setHaptic") ?? true;
 
 double confirmDeleteButtonsOpacity = 0;
 
