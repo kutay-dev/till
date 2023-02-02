@@ -654,7 +654,7 @@ class _MainState extends State<Main> {
                   TextButton(
                     onPressed: () async {
                       if (!await launchUrl(Uri.parse(
-                          'https://play.google.com/store/apps/dev?id=4755389231975300206'))) {
+                          'https://play.google.com/store/apps/details?id=com.vdev.till'))) {
                         throw Exception('Could not launch the page');
                       }
                     },
@@ -662,7 +662,7 @@ class _MainState extends State<Main> {
                       foregroundColor: Colors.black45,
                       splashFactory: NoSplash.splashFactory,
                     ),
-                    child: const Text("Store Page"),
+                    child: const Text("Rate Us"),
                   ),
                   TextButton(
                     onPressed: () async {
