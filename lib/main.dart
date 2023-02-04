@@ -51,6 +51,7 @@ class Main extends StatefulWidget {
 List counterObj = box.read("counterObj") ?? [];
 
 dynamic size;
+dynamic textScale;
 
 late DateTime date;
 late String dateStr;
@@ -281,7 +282,7 @@ class _MainState extends State<Main> {
                                 timeInSecForIosWeb: 2,
                                 backgroundColor: Colors.red[300],
                                 textColor: Colors.white,
-                                fontSize: 18);
+                                fontSize: 18 / textScale);
                             return;
                           }
 
@@ -301,10 +302,10 @@ class _MainState extends State<Main> {
                           shadowColor: Colors.transparent,
                           foregroundColor: Colors.white,
                         ),
-                        child: const Text(
+                        child: Text(
                           "Add Counter",
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14 / textScale,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -399,11 +400,12 @@ class _MainState extends State<Main> {
                               progressColor: Colors.white,
                               backgroundColor: Colors.white10,
                               circularStrokeCap: CircularStrokeCap.round,
-                              center: const Text(
+                              center: Text(
                                 "100%",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 14 / textScale,
                                 ),
                               ),
                             ),
@@ -419,22 +421,24 @@ class _MainState extends State<Main> {
                                 maxLength: 15,
                                 textCapitalization:
                                     TextCapitalization.characters,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   hintText: "TITLE",
-                                  hintStyle: TextStyle(color: Colors.white54),
+                                  hintStyle: TextStyle(
+                                      color: Colors.white54,
+                                      fontSize: 14 / textScale),
                                   counterStyle:
-                                      TextStyle(color: Colors.white30),
-                                  focusedBorder: UnderlineInputBorder(
+                                      const TextStyle(color: Colors.white30),
+                                  focusedBorder: const UnderlineInputBorder(
                                     borderSide:
                                         BorderSide(color: Colors.white30),
                                   ),
-                                  enabledBorder: UnderlineInputBorder(
+                                  enabledBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                         width: 1, color: Colors.white10),
                                   ),
                                 ),
-                                style: const TextStyle(
-                                  fontSize: 18,
+                                style: TextStyle(
+                                  fontSize: 18 / textScale,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
@@ -517,6 +521,7 @@ class _MainState extends State<Main> {
       DeviceOrientation.portraitDown,
     ]);
     size = MediaQuery.of(context).size;
+    textScale = MediaQuery.of(context).textScaleFactor;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       drawer: Drawer(
@@ -536,7 +541,10 @@ class _MainState extends State<Main> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      const Text("Use 24 hour format"),
+                      Text(
+                        "Use 24 hour format",
+                        style: TextStyle(fontSize: 14 / textScale),
+                      ),
                       Switch(
                         activeTrackColor: Colors.black,
                         inactiveThumbColor: Colors.black,
@@ -555,7 +563,10 @@ class _MainState extends State<Main> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      const Text("Use haptic feedback"),
+                      Text(
+                        "Use haptic feedback",
+                        style: TextStyle(fontSize: 14 / textScale),
+                      ),
                       Switch(
                         activeTrackColor: Colors.black,
                         inactiveThumbColor: Colors.black,
@@ -589,7 +600,10 @@ class _MainState extends State<Main> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text("Delete all counters"),
+                    child: Text(
+                      "Delete all counters",
+                      style: TextStyle(fontSize: 14 / textScale),
+                    ),
                   ),
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 200),
@@ -616,7 +630,10 @@ class _MainState extends State<Main> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            child: const Text("No"),
+                            child: Text(
+                              "No",
+                              style: TextStyle(fontSize: 14 / textScale),
+                            ),
                           ),
                           ElevatedButton(
                             onPressed: () {
@@ -636,7 +653,10 @@ class _MainState extends State<Main> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            child: const Text("Yes"),
+                            child: Text(
+                              "Yes",
+                              style: TextStyle(fontSize: 14 / textScale),
+                            ),
                           ),
                         ],
                       ),
@@ -660,7 +680,10 @@ class _MainState extends State<Main> {
                       foregroundColor: Colors.black45,
                       splashFactory: NoSplash.splashFactory,
                     ),
-                    child: const Text("Rate Us"),
+                    child: Text(
+                      "Rate Us",
+                      style: TextStyle(fontSize: 14 / textScale),
+                    ),
                   ),
                   TextButton(
                     onPressed: () async {
@@ -673,7 +696,10 @@ class _MainState extends State<Main> {
                       foregroundColor: Colors.black45,
                       splashFactory: NoSplash.splashFactory,
                     ),
-                    child: const Text("Privacy Policy"),
+                    child: Text(
+                      "Privacy Policy",
+                      style: TextStyle(fontSize: 14 / textScale),
+                    ),
                   ),
                 ],
               ),
@@ -1112,18 +1138,19 @@ class _CounterCardState extends State<CounterCard> {
                   backgroundColor: Colors.white10,
                   circularStrokeCap: CircularStrokeCap.round,
                   center: (widget.done
-                      ? const Icon(
+                      ? Icon(
                           Icons.check,
-                          size: 27,
+                          size: 27 / textScale,
                           color: Colors.white,
                         )
                       : Text(
                           (100 + perc).toStringAsFixed(0) == "100"
                               ? "99%"
                               : "${(100 + perc).toStringAsFixed(0)}%",
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
+                            fontSize: 14 / textScale,
                           ),
                         )),
                 ),
@@ -1138,8 +1165,8 @@ class _CounterCardState extends State<CounterCard> {
                       children: [
                         Text(
                           widget.title.toString().toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 18,
+                          style: TextStyle(
+                            fontSize: 18 / textScale,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -1156,17 +1183,17 @@ class _CounterCardState extends State<CounterCard> {
                                       children: [
                                         Text(
                                           "D: $daysLeft",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               color: Colors.white54,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 13.5),
+                                              fontSize: 13.5 / textScale),
                                         ),
                                         Text(
                                           "H: $hoursLeft",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               color: Colors.white54,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 13.5),
+                                              fontSize: 13.5 / textScale),
                                         ),
                                       ],
                                     ),
@@ -1179,17 +1206,17 @@ class _CounterCardState extends State<CounterCard> {
                                       children: [
                                         Text(
                                           "M: $minsLeft",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               color: Colors.white54,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 13.5),
+                                              fontSize: 13.5 / textScale),
                                         ),
                                         Text(
                                           "S: ${left.toStringAsFixed(0)}",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               color: Colors.white54,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 13.5),
+                                              fontSize: 13.5 / textScale),
                                         ),
                                       ],
                                     ),
@@ -1272,7 +1299,10 @@ class _CounterCardState extends State<CounterCard> {
                             deleteEnabled = true;
                             setState(() {});
                           }),
-                          child: const Text("no"),
+                          child: Text(
+                            "no",
+                            style: TextStyle(fontSize: 14 / textScale),
+                          ),
                         ),
                       ),
                       Container(
@@ -1292,7 +1322,10 @@ class _CounterCardState extends State<CounterCard> {
                             hapticFeedback();
                             widget.deleteCounter(rank);
                           }),
-                          child: const Text("yes"),
+                          child: Text(
+                            "yes",
+                            style: TextStyle(fontSize: 14 / textScale),
+                          ),
                         ),
                       ),
                     ],
@@ -1333,7 +1366,8 @@ class _CounterCardState extends State<CounterCard> {
                         textCapitalization: TextCapitalization.characters,
                         decoration: InputDecoration(
                           hintText: widget.title == "" ? "TITLE" : "",
-                          hintStyle: const TextStyle(color: Colors.white54),
+                          hintStyle: TextStyle(
+                              color: Colors.white54, fontSize: 14 / textScale),
                           counterStyle:
                               const TextStyle(color: Colors.transparent),
                           focusedBorder: const UnderlineInputBorder(
@@ -1346,8 +1380,11 @@ class _CounterCardState extends State<CounterCard> {
                         ),
                         controller: titleController,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14 / textScale,
+                        ),
                       ),
                     ),
                     AnimatedPositioned(
@@ -1503,10 +1540,16 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
                       ListTile(
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 20),
-                        title: Text(days[i]["title"]),
+                        title: Text(
+                          days[i]["title"],
+                          style: TextStyle(fontSize: 14 / textScale),
+                        ),
                         subtitle: Text(
                           days[i]["date"],
-                          style: const TextStyle(color: Colors.black45),
+                          style: TextStyle(
+                            color: Colors.black45,
+                            fontSize: 14 / textScale,
+                          ),
                         ),
                         trailing: SizedBox(
                           height: 50,
