@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 
 void main() async {
   await GetStorage.init();
@@ -19,6 +20,13 @@ void main() async {
 }
 
 final box = GetStorage();
+
+RateMyApp rateMyApp = RateMyApp(
+  preferencesPrefix: 'rateMyApp_',
+  minLaunches: 2,
+  remindLaunches: 3,
+  googlePlayIdentifier: 'com.vdev.till',
+);
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -130,6 +138,12 @@ class _MainState extends State<Main> {
     getCounterCards();
     scrollToBottomAsync();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await rateMyApp.init();
+      if (mounted && rateMyApp.shouldOpenDialog) {
+        rateMyApp.showRateDialog(context);
+      }
+    });
   }
 
   void getCounterCards() {
