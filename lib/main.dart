@@ -13,13 +13,26 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:rate_my_app/rate_my_app.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() async {
+Future main() async {
   await GetStorage.init();
+  await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+
   runApp(const App());
 }
 
 final box = GetStorage();
+
+final BannerAd banner = BannerAd(
+  adUnitId: dotenv.get("BANNER_AD_UNIT_ID"),
+  size: AdSize.banner,
+  request: const AdRequest(),
+  listener: const BannerAdListener(),
+);
 
 RateMyApp rateMyApp = RateMyApp(
   preferencesPrefix: 'rateMyApp_',
@@ -138,6 +151,7 @@ class _MainState extends State<Main> {
     getCounterCards();
     scrollToBottomAsync();
     super.initState();
+    banner.load();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await rateMyApp.init();
       if (mounted && rateMyApp.shouldOpenDialog) {
@@ -220,16 +234,17 @@ class _MainState extends State<Main> {
           child: Stack(
             children: [
               Positioned(
-                top: 115,
+                top: size.height / 7,
                 child: CupertinoTheme(
-                  data: const CupertinoThemeData(
+                  data: CupertinoThemeData(
                     textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle:
-                          TextStyle(fontSize: 18, color: Colors.black),
+                      dateTimePickerTextStyle: TextStyle(
+                          fontSize: 18.0 * (size.height * 0.0011),
+                          color: Colors.black),
                     ),
                   ),
                   child: SizedBox(
-                    height: size.height / 1.2,
+                    height: size.height / 1.3,
                     width: size.width,
                     child: CupertinoDatePicker(
                       use24hFormat: set24HourFormat,
@@ -243,7 +258,8 @@ class _MainState extends State<Main> {
               ),
               Container(
                 alignment: Alignment.bottomCenter,
-                padding: const EdgeInsets.only(bottom: 50),
+                padding: EdgeInsets.only(
+                    bottom: window.viewPadding.bottom > 100 ? 50 : 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -282,28 +298,30 @@ class _MainState extends State<Main> {
                       height: 57.5,
                       child: ElevatedButton(
                         onPressed: () {
-                          hapticFeedback();
-                          late Duration diff;
-                          try {
-                            DateTime now = DateTime.now();
-                            dateStr = "$date";
-                            diff = now.difference(date);
-                          } catch (e) {
-                            Fluttertoast.showToast(
-                                msg: "Enter a valid time",
-                                toastLength: Toast.LENGTH_LONG,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 2,
-                                backgroundColor: Colors.red[300],
-                                textColor: Colors.white,
-                                fontSize: 18 / textScale);
-                            return;
-                          }
+                          if (titleController.text != "") {
+                            hapticFeedback();
+                            late Duration diff;
+                            try {
+                              DateTime now = DateTime.now();
+                              dateStr = "$date";
+                              diff = now.difference(date);
+                            } catch (e) {
+                              Fluttertoast.showToast(
+                                  msg: "Enter a valid time",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 2,
+                                  backgroundColor: Colors.red[300],
+                                  textColor: Colors.white,
+                                  fontSize: 18 / textScale);
+                              return;
+                            }
 
-                          if (diff.isNegative) {
-                            Navigator.of(context).pop();
-                            addCounterCard();
-                            setState(() {});
+                            if (diff.isNegative) {
+                              Navigator.of(context).pop();
+                              addCounterCard();
+                              setState(() {});
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -358,7 +376,7 @@ class _MainState extends State<Main> {
                 ),
               ),
               Positioned(
-                top: 40,
+                top: window.viewPadding.top > 100 ? 40 : 15,
                 child: SizedBox(
                   width: size.width,
                   child: Padding(
@@ -473,8 +491,9 @@ class _MainState extends State<Main> {
   }
 
   double floatingAddButtonPosition = 0;
-  double floatingSortButtonPosition = 0;
-  double floatingDeleteButtonPosition = 0;
+  double floatingSortButtonBottomPosition = 50;
+  double floatingSortButtonRightPosition = 0;
+  double floatingDeleteButtonPosition = 50;
   double floatingAddButtonOpacity = 0;
   double floatingSortButtonOpacity = 0;
   double floatingDeleteButtonOpacity = 0;
@@ -494,11 +513,15 @@ class _MainState extends State<Main> {
     floatingAddButtonOpacity = floatingAddButtonOpacity == 0 ? 1 : 0;
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 50));
-    floatingSortButtonPosition = floatingSortButtonPosition == 0 ? 70 : 0;
+    floatingSortButtonBottomPosition =
+        floatingSortButtonBottomPosition == 50 ? 120 : 50;
+    floatingSortButtonRightPosition =
+        floatingSortButtonRightPosition == 0 ? 70 : 0;
     floatingSortButtonOpacity = floatingSortButtonOpacity == 0 ? 1 : 0;
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 50));
-    floatingDeleteButtonPosition = floatingDeleteButtonPosition == 0 ? 90 : 0;
+    floatingDeleteButtonPosition =
+        floatingDeleteButtonPosition == 50 ? 140 : 50;
     floatingDeleteButtonOpacity = floatingDeleteButtonOpacity == 0 ? 1 : 0;
 
     setState(() {});
@@ -717,14 +740,14 @@ class _MainState extends State<Main> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
       floatingActionButton: Stack(
         children: [
           Positioned(
-            bottom: 0,
+            bottom: 50,
             right: 0,
             child: BlurFilter(
               radius: 100,
@@ -741,7 +764,7 @@ class _MainState extends State<Main> {
             ),
           ),
           AnimatedPositioned(
-            bottom: 0,
+            bottom: 50,
             right: floatingAddButtonPosition,
             duration: const Duration(milliseconds: 150),
             curve: Curves.ease,
@@ -789,8 +812,8 @@ class _MainState extends State<Main> {
             ),
           ),
           AnimatedPositioned(
-            bottom: floatingSortButtonPosition,
-            right: floatingSortButtonPosition,
+            bottom: floatingSortButtonBottomPosition,
+            right: floatingSortButtonRightPosition,
             duration: const Duration(milliseconds: 150),
             curve: Curves.ease,
             child: AnimatedOpacity(
@@ -868,7 +891,7 @@ class _MainState extends State<Main> {
             ),
           ),
           Positioned(
-            bottom: 0,
+            bottom: 50,
             right: 0,
             child: SizedBox(
               width: 60,
@@ -921,6 +944,14 @@ class _MainState extends State<Main> {
                     style: TextStyle(color: Colors.black45),
                   ),
                 )),
+          Positioned(
+            bottom: window.viewPadding.bottom > 100 ? 20 : 0,
+            child: SizedBox(
+              height: 60,
+              width: size.width,
+              child: AdWidget(ad: banner),
+            ),
+          ),
         ],
       ),
     );
@@ -1177,12 +1208,20 @@ class _CounterCardState extends State<CounterCard> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.title.toString().toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 18 / textScale,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        SizedBox(
+                          width: size.width * 0.4,
+                          child: FittedBox(
+                            alignment: Alignment.centerLeft,
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              widget.title.toString().toUpperCase(),
+                              style: TextStyle(
+                                fontSize:
+                                    (18.0 * textScale) * (size.width * 0.0027),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 15),
@@ -1200,14 +1239,16 @@ class _CounterCardState extends State<CounterCard> {
                                           style: TextStyle(
                                               color: Colors.white54,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 13.5 / textScale),
+                                              fontSize: (13.5 * textScale) *
+                                                  (size.width * 0.0023)),
                                         ),
                                         Text(
                                           "H: $hoursLeft",
                                           style: TextStyle(
                                               color: Colors.white54,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 13.5 / textScale),
+                                              fontSize: (13.5 * textScale) *
+                                                  (size.width * 0.0023)),
                                         ),
                                       ],
                                     ),
@@ -1223,14 +1264,16 @@ class _CounterCardState extends State<CounterCard> {
                                           style: TextStyle(
                                               color: Colors.white54,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 13.5 / textScale),
+                                              fontSize: (13.5 * textScale) *
+                                                  (size.width * 0.0023)),
                                         ),
                                         Text(
                                           "S: ${left.toStringAsFixed(0)}",
                                           style: TextStyle(
                                               color: Colors.white54,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 13.5 / textScale),
+                                              fontSize: (13.5 * textScale) *
+                                                  (size.width * 0.0023)),
                                         ),
                                       ],
                                     ),
@@ -1263,25 +1306,27 @@ class _CounterCardState extends State<CounterCard> {
                     color: Colors.white54,
                   ),
                   onPressed: () async {
-                    hapticFeedback();
-                    animateCardHeight();
-                    animateOptionsOpacity();
-                    if (showOptions) {
-                      counterObj[rank]["title"] = titleController.text;
-                      selected != null
-                          ? counterObj[rank]["image"] = croppedSelected!.path
-                          : null;
-                      box.write("counterObj", counterObj);
-                      await Future.delayed(const Duration(milliseconds: 150));
-                      widget.getCounterCards();
-                    }
-                    showOptions = !showOptions;
-                    animateConfirmDeleteOpacity(0);
-                    if (showOptions) {
-                      deleteEnabled = true;
-                    }
+                    if (titleController.text != "") {
+                      hapticFeedback();
+                      animateCardHeight();
+                      animateOptionsOpacity();
+                      if (showOptions) {
+                        counterObj[rank]["title"] = titleController.text;
+                        selected != null
+                            ? counterObj[rank]["image"] = croppedSelected!.path
+                            : null;
+                        box.write("counterObj", counterObj);
+                        await Future.delayed(const Duration(milliseconds: 150));
+                        widget.getCounterCards();
+                      }
+                      showOptions = !showOptions;
+                      animateConfirmDeleteOpacity(0);
+                      if (showOptions) {
+                        deleteEnabled = true;
+                      }
 
-                    setState(() {});
+                      setState(() {});
+                    }
                   },
                 ),
               ),
