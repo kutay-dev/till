@@ -34,6 +34,50 @@ final BannerAd banner = BannerAd(
   listener: const BannerAdListener(),
 );
 
+dynamic rewintAd;
+
+void loadRewIntAd() {
+  RewardedInterstitialAd.load(
+    adUnitId: dotenv.get("REWINT_AD_UNIT_ID"),
+    request: const AdRequest(),
+    rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
+      onAdLoaded: (RewardedInterstitialAd ad) {
+        rewintAd = ad;
+        if (rewintAd == null) return;
+
+        rewintAd.fullScreenContentCallback = FullScreenContentCallback(
+          onAdShowedFullScreenContent: (RewardedInterstitialAd ad) {
+            debugPrint(ad.toString());
+          },
+          onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
+            debugPrint("dismissed");
+            ad.dispose();
+          },
+          onAdFailedToShowFullScreenContent:
+              (RewardedInterstitialAd ad, AdError error) {
+            debugPrint("failed");
+            ad.dispose();
+          },
+          onAdImpression: (RewardedInterstitialAd ad) {
+            debugPrint("impression occured");
+          },
+        );
+      },
+      onAdFailedToLoad: (LoadAdError error) {
+        debugPrint(error.toString());
+      },
+    ),
+  );
+}
+
+void showRewInt() {
+  rewintAd.show(
+    onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
+      debugPrint("reward earned");
+    },
+  );
+}
+
 RateMyApp rateMyApp = RateMyApp(
   preferencesPrefix: 'rateMyApp_',
   minLaunches: 2,
@@ -148,9 +192,13 @@ class _MainState extends State<Main> {
 
   @override
   void initState() {
-    getCounterCards();
     scrollToBottomAsync();
     super.initState();
+    if (box.read("firstOpen") == null) {
+      startRewInt();
+    } else {
+      getCounterCards();
+    }
     banner.load();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await rateMyApp.init();
@@ -158,6 +206,19 @@ class _MainState extends State<Main> {
         rateMyApp.showRateDialog(context);
       }
     });
+  }
+
+  void startRewInt() async {
+    loadRewIntAd();
+    while (true) {
+      if (rewintAd != null) {
+        showRewInt();
+        getCounterCards();
+        box.write("firstOpen", false);
+        break;
+      }
+      await Future.delayed(const Duration(milliseconds: 200));
+    }
   }
 
   void getCounterCards() {
