@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:ui';
-import 'dart:io';
+import 'dart:io' show File, Platform;
 import 'package:get_storage/get_storage.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,7 +28,9 @@ Future main() async {
 final box = GetStorage();
 
 final BannerAd banner = BannerAd(
-  adUnitId: dotenv.get("BANNER_AD_UNIT_ID"),
+  adUnitId: Platform.isAndroid
+      ? dotenv.get("BANNER_AD_UNIT_ID")
+      : dotenv.get("BANNER_AD_UNIT_ID_IOS"),
   size: AdSize.banner,
   request: const AdRequest(),
   listener: const BannerAdListener(),
@@ -38,7 +40,9 @@ dynamic rewintAd;
 
 void loadRewIntAd() {
   RewardedInterstitialAd.load(
-    adUnitId: dotenv.get("REWINT_AD_UNIT_ID"),
+    adUnitId: Platform.isAndroid
+        ? dotenv.get("REWINT_AD_UNIT_ID")
+        : dotenv.get("REWINT_AD_UNIT_ID_IOS"),
     request: const AdRequest(),
     rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
       onAdLoaded: (RewardedInterstitialAd ad) {
@@ -194,11 +198,7 @@ class _MainState extends State<Main> {
   void initState() {
     scrollToBottomAsync();
     super.initState();
-    if (box.read("firstOpen") == null) {
-      startRewInt();
-    } else {
-      getCounterCards();
-    }
+    startRewInt();
     banner.load();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await rateMyApp.init();
