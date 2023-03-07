@@ -1,11 +1,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.vdev.till">
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <uses-permission android:name="com.android.vending.BILLING"/>
+
+    
+
+        <!-- Provide required visibility configuration for API level 30 and above -->
+    <queries>
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="https" />
+    </intent>
+    <!-- If your app checks for SMS support -->
+
+
+    </queries>
    <application
         android:label="till"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
+
+
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
@@ -26,23 +45,25 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <!-- Provide required visibility configuration for API level 30 and above -->
-            <queries>
-            <!-- If your app checks for SMS support -->
-            <intent>
-                <action android:name="android.intent.action.VIEW" />
-                <data android:scheme="sms" />
-            </intent>
-            <!-- If your app checks for call support -->
-            <intent>
-                <action android:name="android.intent.action.VIEW" />
-                <data android:scheme="tel" />
-            </intent>
-            </queries>
+          
         </activity>
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"/>
+      
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5512466165353078~9535989331"/>
     </application>
 </manifest>

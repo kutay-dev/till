@@ -1,11 +1,10 @@
-// ignore_for_file: must_be_immutable, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:ui';
-import 'dart:io' show File, Platform;
+import 'dart:async';
+import 'dart:io' show File;
 import 'package:get_storage/get_storage.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,74 +12,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:rate_my_app/rate_my_app.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future main() async {
+Future<void> main() async {
   await GetStorage.init();
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
 
   runApp(const App());
 }
 
 final box = GetStorage();
-
-final BannerAd banner = BannerAd(
-  adUnitId: Platform.isAndroid
-      ? dotenv.get("BANNER_AD_UNIT_ID")
-      : dotenv.get("BANNER_AD_UNIT_ID_IOS"),
-  size: AdSize.banner,
-  request: const AdRequest(),
-  listener: const BannerAdListener(),
-);
-
-dynamic rewintAd;
-
-void loadRewIntAd() {
-  RewardedInterstitialAd.load(
-    adUnitId: Platform.isAndroid
-        ? dotenv.get("REWINT_AD_UNIT_ID")
-        : dotenv.get("REWINT_AD_UNIT_ID_IOS"),
-    request: const AdRequest(),
-    rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
-      onAdLoaded: (RewardedInterstitialAd ad) {
-        rewintAd = ad;
-        if (rewintAd == null) return;
-
-        rewintAd.fullScreenContentCallback = FullScreenContentCallback(
-          onAdShowedFullScreenContent: (RewardedInterstitialAd ad) {
-            debugPrint(ad.toString());
-          },
-          onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-            debugPrint("dismissed");
-            ad.dispose();
-          },
-          onAdFailedToShowFullScreenContent:
-              (RewardedInterstitialAd ad, AdError error) {
-            debugPrint("failed");
-            ad.dispose();
-          },
-          onAdImpression: (RewardedInterstitialAd ad) {
-            debugPrint("impression occured");
-          },
-        );
-      },
-      onAdFailedToLoad: (LoadAdError error) {
-        debugPrint(error.toString());
-      },
-    ),
-  );
-}
-
-void showRewInt() {
-  rewintAd.show(
-    onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
-      debugPrint("reward earned");
-    },
-  );
-}
 
 RateMyApp rateMyApp = RateMyApp(
   preferencesPrefix: 'rateMyApp_',
@@ -132,6 +74,33 @@ bool set24HourFormat = box.read("set24HourFormat") ?? true;
 bool setHaptic = box.read("setHaptic") ?? true;
 
 double confirmDeleteButtonsOpacity = 0;
+
+List<Color> primaryGradient = gradients[box.read("primaryGradient") ?? 0];
+
+List<List<Color>> gradients = [
+  [
+    const Color.fromARGB(255, 84, 113, 182),
+    const Color.fromARGB(255, 114, 174, 224),
+  ],
+  [
+    const Color.fromARGB(255, 142, 98, 203),
+    const Color.fromARGB(255, 185, 130, 209),
+  ],
+  [
+    const Color.fromARGB(255, 204, 165, 102),
+    const Color.fromARGB(255, 240, 209, 143),
+  ],
+  [
+    const Color.fromARGB(255, 96, 173, 99),
+    const Color.fromARGB(255, 143, 213, 145),
+  ],
+  [
+    Colors.black,
+    const Color.fromARGB(255, 35, 35, 35),
+  ],
+];
+
+Color floatingColor = Colors.black;
 
 void hapticFeedback([String impact = "medium"]) {
   if (setHaptic) {
@@ -196,29 +165,16 @@ class _MainState extends State<Main> {
 
   @override
   void initState() {
+    getCounterCards();
     scrollToBottomAsync();
     super.initState();
-    startRewInt();
-    banner.load();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await rateMyApp.init();
       if (mounted && rateMyApp.shouldOpenDialog) {
         rateMyApp.showRateDialog(context);
       }
     });
-  }
-
-  void startRewInt() async {
-    loadRewIntAd();
-    while (true) {
-      if (rewintAd != null) {
-        showRewInt();
-        getCounterCards();
-        box.write("firstOpen", false);
-        break;
-      }
-      await Future.delayed(const Duration(milliseconds: 200));
-    }
   }
 
   void getCounterCards() {
@@ -444,13 +400,17 @@ class _MainState extends State<Main> {
                     padding: const EdgeInsets.all(30),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: primaryGradient,
+                        ),
                         borderRadius: const BorderRadius.all(
-                          Radius.circular(20),
+                          Radius.circular(22),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: primaryGradient[0].withOpacity(0.3),
                             spreadRadius: 5,
                             blurRadius: 10,
                             offset: const Offset(0, 0),
@@ -458,7 +418,7 @@ class _MainState extends State<Main> {
                         ],
                       ),
                       width: size.width,
-                      height: 120,
+                      height: 110,
                       child: Stack(
                         children: [
                           BlurFilter(
@@ -484,7 +444,7 @@ class _MainState extends State<Main> {
                             ),
                           ),
                           Positioned(
-                            top: 25,
+                            top: 22,
                             left: 25,
                             child: CircularPercentIndicator(
                               radius: 35,
@@ -492,7 +452,7 @@ class _MainState extends State<Main> {
                               percent: 1,
                               progressColor: Colors.white,
                               backgroundColor: Colors.white10,
-                              circularStrokeCap: CircularStrokeCap.round,
+                              circularStrokeCap: CircularStrokeCap.square,
                               center: Text(
                                 "100%",
                                 style: TextStyle(
@@ -517,13 +477,14 @@ class _MainState extends State<Main> {
                                 decoration: InputDecoration(
                                   hintText: "TITLE",
                                   hintStyle: TextStyle(
-                                      color: Colors.white54,
-                                      fontSize: 14 / textScale),
+                                    color: Colors.white60,
+                                    fontSize: 14 / textScale,
+                                  ),
                                   counterStyle:
-                                      const TextStyle(color: Colors.white30),
+                                      const TextStyle(color: Colors.white60),
                                   focusedBorder: const UnderlineInputBorder(
                                     borderSide:
-                                        BorderSide(color: Colors.white30),
+                                        BorderSide(color: Colors.white38),
                                   ),
                                   enabledBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
@@ -552,9 +513,9 @@ class _MainState extends State<Main> {
   }
 
   double floatingAddButtonPosition = 0;
-  double floatingSortButtonBottomPosition = 50;
+  double floatingSortButtonBottomPosition = 0;
   double floatingSortButtonRightPosition = 0;
-  double floatingDeleteButtonPosition = 50;
+  double floatingDeleteButtonPosition = 0;
   double floatingAddButtonOpacity = 0;
   double floatingSortButtonOpacity = 0;
   double floatingDeleteButtonOpacity = 0;
@@ -575,14 +536,13 @@ class _MainState extends State<Main> {
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 50));
     floatingSortButtonBottomPosition =
-        floatingSortButtonBottomPosition == 50 ? 120 : 50;
+        floatingSortButtonBottomPosition == 0 ? 70 : 0;
     floatingSortButtonRightPosition =
         floatingSortButtonRightPosition == 0 ? 70 : 0;
     floatingSortButtonOpacity = floatingSortButtonOpacity == 0 ? 1 : 0;
     setState(() {});
     await Future.delayed(const Duration(milliseconds: 50));
-    floatingDeleteButtonPosition =
-        floatingDeleteButtonPosition == 50 ? 140 : 50;
+    floatingDeleteButtonPosition = floatingDeleteButtonPosition == 0 ? 90 : 0;
     floatingDeleteButtonOpacity = floatingDeleteButtonOpacity == 0 ? 1 : 0;
 
     setState(() {});
@@ -616,7 +576,6 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
     ]);
     size = MediaQuery.of(context).size;
     textScale = MediaQuery.of(context).textScaleFactor;
@@ -644,9 +603,9 @@ class _MainState extends State<Main> {
                         style: TextStyle(fontSize: 14 / textScale),
                       ),
                       Switch(
-                        activeTrackColor: Colors.black,
-                        inactiveThumbColor: Colors.black,
-                        inactiveTrackColor: Colors.black12,
+                        activeTrackColor: primaryGradient[1],
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor: primaryGradient[0],
                         activeColor: Colors.white,
                         value: set24HourFormat,
                         onChanged: (value) {
@@ -666,9 +625,9 @@ class _MainState extends State<Main> {
                         style: TextStyle(fontSize: 14 / textScale),
                       ),
                       Switch(
-                        activeTrackColor: Colors.black,
-                        inactiveThumbColor: Colors.black,
-                        inactiveTrackColor: Colors.black12,
+                        activeTrackColor: primaryGradient[1],
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor: primaryGradient[0],
                         activeColor: Colors.white,
                         value: setHaptic,
                         onChanged: (value) {
@@ -753,10 +712,172 @@ class _MainState extends State<Main> {
                             ),
                             child: Text(
                               "Yes",
-                              style: TextStyle(fontSize: 14 / textScale),
+                              style: TextStyle(
+                                  fontSize: 14 / textScale,
+                                  color: Colors.redAccent),
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.height / 20,
+                  ),
+                  Text(
+                    "Theme",
+                    style: TextStyle(
+                      fontSize: 22 / textScale,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Container(
+                      color: const Color.fromARGB(45, 0, 0, 0),
+                      height: 1,
+                      width: size.width / 1.8,
+                    ),
+                  ),
+                  SizedBox(
+                    width: size.width / 2,
+                    child: InkWell(
+                      splashColor: gradients[0][1].withOpacity(0.2),
+                      highlightColor: Colors.transparent,
+                      onTap: () {
+                        hapticFeedback();
+                        primaryGradient = gradients[0];
+                        setState(() {});
+                        box.write("primaryGradient", 0);
+                      },
+                      child: GradientText(
+                        "SAPPHIRE",
+                        gradient: LinearGradient(
+                          colors: [
+                            gradients[0][0],
+                            gradients[0][0],
+                            gradients[0][1],
+                            gradients[0][1],
+                          ],
+                        ),
+                        style: TextStyle(
+                          fontSize: 15 / textScale,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: size.height / 80),
+                  SizedBox(
+                    width: size.width / 2,
+                    child: InkWell(
+                      splashColor: gradients[1][1].withOpacity(0.2),
+                      highlightColor: Colors.transparent,
+                      onTap: () {
+                        hapticFeedback();
+                        primaryGradient = gradients[1];
+                        setState(() {});
+                        box.write("primaryGradient", 1);
+                      },
+                      child: GradientText(
+                        "AMETHYST",
+                        gradient: LinearGradient(
+                          colors: [
+                            gradients[1][0],
+                            gradients[1][0],
+                            gradients[1][1],
+                            gradients[1][1],
+                          ],
+                        ),
+                        style: TextStyle(
+                          fontSize: 15 / textScale,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: size.height / 80),
+                  SizedBox(
+                    width: size.width / 2,
+                    child: InkWell(
+                      splashColor: gradients[2][1].withOpacity(0.2),
+                      highlightColor: Colors.transparent,
+                      onTap: () {
+                        hapticFeedback();
+                        primaryGradient = gradients[2];
+                        setState(() {});
+                        box.write("primaryGradient", 2);
+                      },
+                      child: GradientText(
+                        "GOLD",
+                        gradient: LinearGradient(
+                          colors: [
+                            gradients[2][0],
+                            gradients[2][0],
+                            gradients[2][1],
+                            gradients[2][1],
+                          ],
+                        ),
+                        style: TextStyle(
+                          fontSize: 15 / textScale,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: size.height / 80),
+                  SizedBox(
+                    width: size.width / 2,
+                    child: InkWell(
+                      splashColor: gradients[3][1].withOpacity(0.2),
+                      highlightColor: Colors.transparent,
+                      onTap: () {
+                        hapticFeedback();
+                        primaryGradient = gradients[3];
+                        setState(() {});
+                        box.write("primaryGradient", 3);
+                      },
+                      child: GradientText(
+                        "EMERALD",
+                        gradient: LinearGradient(
+                          colors: [
+                            gradients[3][0],
+                            gradients[3][0],
+                            gradients[3][1],
+                            gradients[3][1],
+                          ],
+                        ),
+                        style: TextStyle(
+                          fontSize: 15 / textScale,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: size.height / 80),
+                  SizedBox(
+                    width: size.width / 2,
+                    child: InkWell(
+                      splashColor: gradients[4][1].withOpacity(0.2),
+                      highlightColor: Colors.transparent,
+                      onTap: () {
+                        hapticFeedback();
+                        primaryGradient = gradients[4];
+                        setState(() {});
+                        box.write("primaryGradient", 4);
+                      },
+                      child: GradientText(
+                        "OBSIDIAN",
+                        gradient: const LinearGradient(
+                          colors: [
+                            Colors.black,
+                            Colors.black45,
+                          ],
+                        ),
+                        style: TextStyle(
+                          fontSize: 15 / textScale,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
@@ -785,8 +906,8 @@ class _MainState extends State<Main> {
                   ),
                   TextButton(
                     onPressed: () async {
-                      if (!await launchUrl(Uri.parse(
-                          'https://www.freeprivacypolicy.com/live/8da82b2b-adb1-4f39-88a0-5fb85f49634a'))) {
+                      if (!await launchUrl(
+                          Uri.parse('https://vanta-tech.vercel.app/privacy'))) {
                         throw Exception('Could not launch the page');
                       }
                     },
@@ -808,7 +929,7 @@ class _MainState extends State<Main> {
       floatingActionButton: Stack(
         children: [
           Positioned(
-            bottom: 50,
+            bottom: 0,
             right: 0,
             child: BlurFilter(
               radius: 100,
@@ -816,7 +937,7 @@ class _MainState extends State<Main> {
               sigmaY: 10,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black26,
+                  color: primaryGradient[0].withOpacity(0.3),
                   borderRadius: BorderRadius.circular(100),
                 ),
                 width: 60,
@@ -825,7 +946,7 @@ class _MainState extends State<Main> {
             ),
           ),
           AnimatedPositioned(
-            bottom: 50,
+            bottom: 0,
             right: floatingAddButtonPosition,
             duration: const Duration(milliseconds: 150),
             curve: Curves.ease,
@@ -836,9 +957,20 @@ class _MainState extends State<Main> {
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.all(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: primaryGradient,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
                 ),
@@ -885,7 +1017,26 @@ class _MainState extends State<Main> {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: counterObj.length > 1 ? Colors.black : Colors.black54,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      counterCards.length > 1
+                          ? primaryGradient[0]
+                          : primaryGradient[0].withOpacity(0.3),
+                      counterCards.length > 1
+                          ? primaryGradient[1]
+                          : primaryGradient[1].withOpacity(0.3),
+                    ],
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                  //color: counterObj.length > 1 ? floatingColor : Colors.black54,
                   borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
@@ -932,9 +1083,20 @@ class _MainState extends State<Main> {
               child: Container(
                 width: 60,
                 height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.all(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: primaryGradient,
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(100),
                   ),
                 ),
@@ -952,7 +1114,7 @@ class _MainState extends State<Main> {
             ),
           ),
           Positioned(
-            bottom: 50,
+            bottom: 0,
             right: 0,
             child: SizedBox(
               width: 60,
@@ -1005,14 +1167,6 @@ class _MainState extends State<Main> {
                     style: TextStyle(color: Colors.black45),
                   ),
                 )),
-          Positioned(
-            bottom: window.viewPadding.bottom > 100 ? 20 : 0,
-            child: SizedBox(
-              height: 60,
-              width: size.width,
-              child: AdWidget(ad: banner),
-            ),
-          ),
         ],
       ),
     );
@@ -1075,7 +1229,7 @@ class _CounterCardState extends State<CounterCard> {
     }
     titleController.text = widget.title.toUpperCase();
     getDifference();
-    cardHeight = 120;
+    cardHeight = 110;
     optionsButtonsBottom = 0;
     optionTextFieldBottom = -15;
     super.initState();
@@ -1158,7 +1312,7 @@ class _CounterCardState extends State<CounterCard> {
   }
 
   void animateCardHeight() {
-    cardHeight = cardHeight == 120 ? 170 : 120;
+    cardHeight = cardHeight == 110 ? 170 : 110;
     setState(() {});
   }
 
@@ -1189,29 +1343,35 @@ class _CounterCardState extends State<CounterCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
+      padding: const EdgeInsets.all(25),
       child: AnimatedContainer(
         curve: Curves.ease,
         duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(
-            Radius.circular(25),
+            Radius.circular(30),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: widget.image == "null"
+                  ? primaryGradient[0].withOpacity(0.4)
+                  : Colors.black38,
               spreadRadius: 5,
               blurRadius: 10,
-              offset: const Offset(0, 0),
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         height: cardHeight,
         child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.all(
-              Radius.circular(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: primaryGradient,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(22),
             ),
           ),
           child: Stack(
@@ -1234,7 +1394,7 @@ class _CounterCardState extends State<CounterCard> {
                       ),
                     ),
               Positioned(
-                top: 25,
+                top: 22,
                 left: 25,
                 child: CircularPercentIndicator(
                   radius: 35,
@@ -1242,7 +1402,7 @@ class _CounterCardState extends State<CounterCard> {
                   percent: (100 + perc) / 100,
                   progressColor: Colors.white,
                   backgroundColor: Colors.white10,
-                  circularStrokeCap: CircularStrokeCap.round,
+                  circularStrokeCap: CircularStrokeCap.square,
                   center: (widget.done
                       ? Icon(
                           Icons.check,
@@ -1262,7 +1422,7 @@ class _CounterCardState extends State<CounterCard> {
                 ),
               ),
               Positioned(
-                top: 25,
+                top: 20,
                 left: 110,
                 child: Row(
                   children: [
@@ -1487,7 +1647,9 @@ class _CounterCardState extends State<CounterCard> {
                         decoration: InputDecoration(
                           hintText: widget.title == "" ? "TITLE" : "",
                           hintStyle: TextStyle(
-                              color: Colors.white54, fontSize: 14 / textScale),
+                            color: Colors.white54,
+                            fontSize: 14 / textScale,
+                          ),
                           counterStyle:
                               const TextStyle(color: Colors.transparent),
                           focusedBorder: const UnderlineInputBorder(
@@ -1531,7 +1693,7 @@ class _CounterCardState extends State<CounterCard> {
                 ),
               ),
               SizedBox(
-                width: 35,
+                width: 45,
                 height: 35,
                 child: ReorderableDragStartListener(
                   index: rank,
@@ -1718,7 +1880,13 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
           ),
           Container(
             height: window.viewPadding.top > 100 ? 85 : 70,
-            color: Colors.black,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: primaryGradient,
+              ),
+            ),
           ),
           Positioned(
             top: window.viewPadding.top > 100 ? 35 : 20,
@@ -1734,6 +1902,34 @@ class _SpeacialDaysPageState extends State<SpeacialDaysPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class GradientText extends StatelessWidget {
+  const GradientText(
+    this.text, {
+    super.key,
+    required this.gradient,
+    this.style,
+  });
+
+  final String text;
+  final TextStyle? style;
+  final Gradient gradient;
+
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      blendMode: BlendMode.srcIn,
+      shaderCallback: (bounds) => gradient.createShader(
+        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+      ),
+      child: Text(
+        text,
+        style: style,
+        textAlign: TextAlign.center,
       ),
     );
   }
